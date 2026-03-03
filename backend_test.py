@@ -272,7 +272,7 @@ class PropertyManagementAPITester:
             "Create Lease",
             "POST",
             "leases",
-            200,
+            201,  # Changed from 200 to 201 for creation
             data=lease_data
         )
         
