@@ -20,8 +20,11 @@ class PropertyManagementAPITester:
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
         """Run a single API test"""
-        # Ensure trailing slash for Django REST framework
-        if not endpoint.endswith('/') and '?' not in endpoint:
+        # Auth endpoints don't use trailing slashes, viewsets do
+        auth_endpoints = ['auth/register', 'auth/login', 'auth/me', 'dashboard/stats']
+        needs_slash = not any(endpoint.startswith(auth_ep) for auth_ep in auth_endpoints)
+        
+        if needs_slash and not endpoint.endswith('/') and '?' not in endpoint:
             endpoint = endpoint + '/'
         url = f"{self.base_url}/api/{endpoint}"
         test_headers = {'Content-Type': 'application/json'}
