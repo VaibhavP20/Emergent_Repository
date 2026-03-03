@@ -1,0 +1,174 @@
+{
+  "identity": {
+    "persona": "E1",
+    "philosophy": "Fusion over Imitation. Emotion First. Content is King.",
+    "anti_patterns": [
+      "Purple/Teal for CTAs",
+      "Inter for Headings",
+      "Center-Everything Disease",
+      "Gradient Overload",
+      "Generic 'SaaS Blue'"
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Outfit, sans-serif",
+      "body": "Inter, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "weights": {
+      "headings": "600 (SemiBold) or 500 (Medium)",
+      "body": "400 (Regular)",
+      "bold": "700 (Bold)"
+    },
+    "sizes": {
+      "h1": "text-4xl md:text-5xl tracking-tight",
+      "h2": "text-3xl md:text-4xl tracking-tight",
+      "h3": "text-2xl md:text-3xl tracking-tight",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm leading-normal",
+      "tiny": "text-xs tracking-wide uppercase"
+    },
+    "installation": "Import from Google Fonts: https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
+  },
+  "colors": {
+    "palette_name": "Archetype 1: Organic & Earthy (Professional Variant)",
+    "primary": {
+      "name": "Deep Slate",
+      "hex": "#0F172A",
+      "usage": "Primary Actions, Headings, Sidebar Backgrounds"
+    },
+    "secondary": {
+      "name": "Emerald Growth",
+      "hex": "#10B981",
+      "usage": "Success States, Rent Paid, Positive Trends"
+    },
+    "accent": {
+      "name": "Terracotta Alert",
+      "hex": "#F97316",
+      "usage": "Notifications, Due Dates, Urgent Actions"
+    },
+    "neutral": {
+      "background": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "border": "#E2E8F0",
+      "text_primary": "#0F172A",
+      "text_secondary": "#64748B",
+      "text_tertiary": "#94A3B8"
+    },
+    "gradients": {
+      "subtle_surface": "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
+      "active_state": "linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0) 100%)"
+    }
+  },
+  "layout": {
+    "grid_system": "Bento Grid Mode B (High Density)",
+    "spacing": {
+      "container_padding": "p-6 md:p-8 lg:p-12",
+      "element_gap": "gap-4 md:gap-6",
+      "section_gap": "gap-8 md:gap-12"
+    },
+    "radius": {
+      "default": "rounded-lg",
+      "sharp": "rounded-sm",
+      "pill": "rounded-full"
+    },
+    "dashboard_structure": {
+      "sidebar": "w-64 fixed h-full bg-primary text-white hidden md:block",
+      "main_content": "md:ml-64 min-h-screen bg-neutral-background p-6",
+      "header": "sticky top-0 z-40 w-full backdrop-blur-xl bg-white/80 border-b border-neutral-border"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-white hover:bg-primary/90 shadow-sm rounded-md px-4 py-2 transition-all active:scale-95",
+      "secondary": "bg-white text-primary border border-neutral-border hover:bg-neutral-background shadow-sm rounded-md px-4 py-2 transition-all",
+      "ghost": "hover:bg-neutral-background text-neutral-text_secondary hover:text-primary transition-colors"
+    },
+    "cards": {
+      "style": "bg-white border border-neutral-border shadow-sm hover:shadow-md transition-shadow duration-200 rounded-lg p-6",
+      "header": "flex justify-between items-center mb-4 border-b border-neutral-border/50 pb-2",
+      "content": "text-neutral-text_secondary text-sm"
+    },
+    "inputs": {
+      "style": "bg-white border border-neutral-border focus:ring-2 focus:ring-primary/20 focus:border-primary rounded-md px-3 py-2 text-sm transition-all placeholder:text-neutral-text_tertiary"
+    },
+    "status_badges": {
+      "success": "bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full text-xs font-medium",
+      "warning": "bg-orange-50 text-orange-700 border border-orange-200 px-2 py-0.5 rounded-full text-xs font-medium",
+      "error": "bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded-full text-xs font-medium",
+      "neutral": "bg-slate-50 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full text-xs font-medium"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "card": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+      "float": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+    },
+    "glassmorphism": {
+      "header": "backdrop-blur-md bg-white/70 border-b border-white/20"
+    },
+    "textures": {
+      "noise": "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")"
+    }
+  },
+  "image_urls": {
+    "login_background": {
+      "url": "https://images.unsplash.com/photo-1560922604-d08a31f8f7d1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjBidWlsZGluZyUyMGV4dGVyaW9yJTIwYXJjaGl0ZWN0dXJlfGVufDB8fHx8MTc3MjUwMjI2MHww&ixlib=rb-4.1.0&q=85",
+      "alt": "Modern Office Building Exterior",
+      "usage": "Full screen background for login/register pages with overlay"
+    },
+    "property_placeholders": [
+      {
+        "url": "https://images.unsplash.com/photo-1771287490603-fbf9b6211cc3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBpbnRlcmlvciUyMGJyaWdodHxlbnwwfHx8fDE3NzI1MDIyNTh8MA&ixlib=rb-4.1.0&q=85",
+        "alt": "Modern Living Room City View"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1758548157747-285c7012db5b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwzfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBpbnRlcmlvciUyMGJyaWdodHxlbnwwfHx8fDE3NzI1MDIyNTh8MA&ixlib=rb-4.1.0&q=85",
+        "alt": "Minimalist Living Room"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1757439402190-99b73ac8e807?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHw0fHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBpbnRlcmlvciUyMGJyaWdodHxlbnwwfHx8fDE3NzI1MDIyNTh8MA&ixlib=rb-4.1.0&q=85",
+        "alt": "Modern Kitchen Island"
+      }
+    ],
+    "avatars": {
+      "default": "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+    }
+  },
+  "motion": {
+    "transitions": "transition-all duration-200 ease-in-out",
+    "hover_lift": "hover:-translate-y-1 hover:shadow-md",
+    "page_enter": "animate-in fade-in slide-in-from-bottom-4 duration-500"
+  },
+  "accessibility": {
+    "contrast_check": "Ensure text meets APCA standards. Use text-slate-900 on light backgrounds.",
+    "focus_states": "focus:ring-2 focus:ring-offset-2 focus:ring-primary",
+    "aria_labels": "Required for all icon-only buttons"
+  },
+  "instructions_to_main_agent": [
+    "Use 'Outfit' font for all Headings (h1-h3) and 'Inter' for body text.",
+    "Implement the 'Bento Grid' layout for the dashboard overview.",
+    "Use the defined color palette strictly. Do not use default Tailwind colors like 'blue-500' directly; use the semantic names or the specific hex codes provided.",
+    "Ensure all interactive elements have the defined hover and focus states.",
+    "Use the provided image URLs for the login page and property cards.",
+    "Add 'data-testid' to all interactive elements.",
+    "Do not use gradients for backgrounds unless specified in the 'visual_enhancers' section.",
+    "Keep the design clean, professional, and high-contrast."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Avoid 'AI slop' aesthetic (generic centered layouts, uniform styling).",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) for headers/overlays.",
+    "Do NOT apply universal transition (e.g., transition: all).",
+    "Do NOT center align the app container.",
+    "Use modern button styles (pill-shaped or sharp).",
+    "NEVER use AI assistant Emoji characters as icons.",
+    "Every interaction needs micro-animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Prioritize using pre-existing components from src/components/ui.",
+    "Components MUST use named exports.",
+    "Pages MUST use default exports.",
+    "Use 'sonner' for toasts."
+  ]
+}
