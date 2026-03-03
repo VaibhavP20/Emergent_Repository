@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Toaster } from "./components/ui/sonner";
 
 // Pages
+import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -56,9 +57,37 @@ const PublicRoute = ({ children }) => {
     return children;
 };
 
+const LandingRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    if (user) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    return children;
+};
+
 function AppRoutes() {
     return (
         <Routes>
+            {/* Landing Page */}
+            <Route
+                path="/"
+                element={
+                    <LandingRoute>
+                        <LandingPage />
+                    </LandingRoute>
+                }
+            />
+
             {/* Public Routes */}
             <Route
                 path="/login"
@@ -163,9 +192,8 @@ function AppRoutes() {
                 }
             />
 
-            {/* Default Redirects */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            {/* Catch all - redirect to landing */}
+            <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
 }
