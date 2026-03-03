@@ -140,7 +140,7 @@ class PropertyManagementAPITester:
             "Register Landlord",
             "POST",
             "auth/register",
-            200,
+            201,  # Changed from 200 to 201 for creation
             data=landlord_data
         )
         if success:
