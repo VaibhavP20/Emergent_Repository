@@ -207,7 +207,7 @@ class PropertyManagementAPITester:
             "Create Property",
             "POST",
             "properties",
-            200,
+            201,  # Changed from 200 to 201 for creation
             data=property_data
         )
         
