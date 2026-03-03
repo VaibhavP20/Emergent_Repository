@@ -303,14 +303,14 @@ export default function PropertiesPage() {
                         <div className="space-y-2">
                             <Label htmlFor="landlord">Assign Landlord</Label>
                             <Select
-                                value={formData.landlord_id}
-                                onValueChange={(value) => setFormData({ ...formData, landlord_id: value })}
+                                value={formData.landlord_id || "none"}
+                                onValueChange={(value) => setFormData({ ...formData, landlord_id: value === "none" ? "" : value })}
                             >
                                 <SelectTrigger data-testid="property-landlord-select">
                                     <SelectValue placeholder="Select landlord (optional)" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">No landlord assigned</SelectItem>
+                                    <SelectItem value="none">No landlord assigned</SelectItem>
                                     {landlords.map((landlord) => (
                                         <SelectItem key={landlord.id} value={landlord.id}>
                                             {landlord.name}
