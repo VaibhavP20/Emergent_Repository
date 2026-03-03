@@ -1,54 +1,184 @@
-import { useEffect } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Toaster } from "./components/ui/sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Pages
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import PropertiesPage from "./pages/PropertiesPage";
+import TenantsPage from "./pages/TenantsPage";
+import LandlordsPage from "./pages/LandlordsPage";
+import LeasesPage from "./pages/LeasesPage";
+import RentsPage from "./pages/RentsPage";
+import ComplaintsPage from "./pages/ComplaintsPage";
+import TenantLeasePage from "./pages/TenantLeasePage";
+import TenantRentsPage from "./pages/TenantRentsPage";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+const ProtectedRoute = ({ children, allowedRoles }) => {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
     }
-  };
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    return children;
 };
 
-function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
+const PublicRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    if (user) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    return children;
+};
+
+function AppRoutes() {
+    return (
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+            {/* Public Routes */}
+            <Route
+                path="/login"
+                element={
+                    <PublicRoute>
+                        <LoginPage />
+                    </PublicRoute>
+                }
+            />
+            <Route
+                path="/register"
+                element={
+                    <PublicRoute>
+                        <RegisterPage />
+                    </PublicRoute>
+                }
+            />
+
+            {/* Protected Routes - All Users */}
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <DashboardPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Property Manager Routes */}
+            <Route
+                path="/properties"
+                element={
+                    <ProtectedRoute allowedRoles={['property_manager', 'landlord']}>
+                        <PropertiesPage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/tenants"
+                element={
+                    <ProtectedRoute allowedRoles={['property_manager']}>
+                        <TenantsPage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/landlords"
+                element={
+                    <ProtectedRoute allowedRoles={['property_manager']}>
+                        <LandlordsPage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/leases"
+                element={
+                    <ProtectedRoute allowedRoles={['property_manager', 'landlord']}>
+                        <LeasesPage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/rents"
+                element={
+                    <ProtectedRoute allowedRoles={['property_manager', 'landlord']}>
+                        <RentsPage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/complaints"
+                element={
+                    <ProtectedRoute allowedRoles={['property_manager', 'landlord']}>
+                        <ComplaintsPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Tenant Routes */}
+            <Route
+                path="/my-lease"
+                element={
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                        <TenantLeasePage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/my-rents"
+                element={
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                        <TenantRentsPage />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/my-complaints"
+                element={
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                        <ComplaintsPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Default Redirects */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-      </BrowserRouter>
-    </div>
-  );
+    );
+}
+
+function App() {
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <AppRoutes />
+                <Toaster position="top-right" richColors />
+            </AuthProvider>
+        </BrowserRouter>
+    );
 }
 
 export default App;

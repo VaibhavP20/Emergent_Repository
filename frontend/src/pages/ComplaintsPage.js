@@ -1,0 +1,384 @@
+import { useState, useEffect } from 'react';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { getComplaints, createComplaint, updateComplaint, getProperties } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Card } from '../components/ui/card';
+import { Textarea } from '../components/ui/textarea';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '../components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '../components/ui/select';
+import { toast } from 'sonner';
+import { Plus, MessageSquare, AlertCircle, CheckCircle, Clock, Building2, User, Reply } from 'lucide-react';
+
+export default function ComplaintsPage() {
+    const { user } = useAuth();
+    const [complaints, setComplaints] = useState([]);
+    const [properties, setProperties] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [responseDialogOpen, setResponseDialogOpen] = useState(false);
+    const [selectedComplaint, setSelectedComplaint] = useState(null);
+    const [formData, setFormData] = useState({
+        property_id: '',
+        title: '',
+        description: '',
+        priority: 'medium',
+    });
+    const [responseText, setResponseText] = useState('');
+
+    const isTenant = user?.role === 'tenant';
+    const canRespond = user?.role === 'property_manager' || user?.role === 'landlord';
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const [complaintsRes, propertiesRes] = await Promise.all([
+                getComplaints(),
+                isTenant ? getProperties() : Promise.resolve({ data: [] }),
+            ]);
+            setComplaints(complaintsRes.data);
+            setProperties(propertiesRes.data);
+        } catch (error) {
+            toast.error('Failed to fetch data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await createComplaint(formData);
+            toast.success('Complaint submitted successfully');
+            setDialogOpen(false);
+            resetForm();
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Failed to submit complaint');
+        }
+    };
+
+    const handleResponse = async (e) => {
+        e.preventDefault();
+        if (!selectedComplaint) return;
+        try {
+            await updateComplaint(selectedComplaint.id, {
+                response: responseText,
+                status: 'in_progress',
+            });
+            toast.success('Response sent successfully');
+            setResponseDialogOpen(false);
+            setSelectedComplaint(null);
+            setResponseText('');
+            fetchData();
+        } catch (error) {
+            toast.error('Failed to send response');
+        }
+    };
+
+    const handleResolve = async (complaintId) => {
+        try {
+            await updateComplaint(complaintId, { status: 'resolved' });
+            toast.success('Complaint marked as resolved');
+            fetchData();
+        } catch (error) {
+            toast.error('Failed to resolve complaint');
+        }
+    };
+
+    const openResponseDialog = (complaint) => {
+        setSelectedComplaint(complaint);
+        setResponseText(complaint.response || '');
+        setResponseDialogOpen(true);
+    };
+
+    const resetForm = () => {
+        setFormData({
+            property_id: '',
+            title: '',
+            description: '',
+            priority: 'medium',
+        });
+    };
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
+
+    const getStatusBadge = (status) => {
+        switch (status) {
+            case 'open':
+                return { label: 'Open', class: 'badge-info', icon: AlertCircle };
+            case 'in_progress':
+                return { label: 'In Progress', class: 'badge-warning', icon: Clock };
+            case 'resolved':
+                return { label: 'Resolved', class: 'badge-success', icon: CheckCircle };
+            default:
+                return { label: status, class: 'badge-neutral', icon: AlertCircle };
+        }
+    };
+
+    const getPriorityBadge = (priority) => {
+        switch (priority) {
+            case 'high':
+                return 'priority-high';
+            case 'medium':
+                return 'priority-medium';
+            case 'low':
+                return 'priority-low';
+            default:
+                return 'badge-neutral';
+        }
+    };
+
+    if (loading) {
+        return (
+            <DashboardLayout title="Complaints">
+                <div className="flex items-center justify-center h-64">
+                    <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+            </DashboardLayout>
+        );
+    }
+
+    return (
+        <DashboardLayout title="Complaints">
+            <div className="space-y-6" data-testid="complaints-page">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <p className="text-slate-500">
+                            {isTenant ? 'Submit and track your complaints' : 'View and address tenant complaints'}
+                        </p>
+                    </div>
+                    {isTenant && (
+                        <Button onClick={() => { resetForm(); setDialogOpen(true); }} className="bg-slate-900 hover:bg-slate-800" data-testid="new-complaint-button">
+                            <Plus className="w-4 h-4 mr-2" />
+                            New Complaint
+                        </Button>
+                    )}
+                </div>
+
+                {complaints.length === 0 ? (
+                    <Card className="p-12">
+                        <div className="empty-state">
+                            <MessageSquare className="empty-state-icon" />
+                            <h3 className="empty-state-title">No complaints</h3>
+                            <p className="empty-state-description">
+                                {isTenant ? 'Submit a complaint if you have any issues.' : 'No complaints to review.'}
+                            </p>
+                        </div>
+                    </Card>
+                ) : (
+                    <div className="space-y-4">
+                        {complaints.map((complaint, index) => {
+                            const status = getStatusBadge(complaint.status);
+                            const StatusIcon = status.icon;
+                            return (
+                                <Card key={complaint.id} className="p-5 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }} data-testid={`complaint-card-${complaint.id}`}>
+                                    <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                                        <div className="flex-1">
+                                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                <h3 className="font-semibold text-lg text-slate-800">{complaint.title}</h3>
+                                                <span className={`badge ${getPriorityBadge(complaint.priority)}`}>
+                                                    {complaint.priority}
+                                                </span>
+                                                <span className={`badge ${status.class} flex items-center gap-1`}>
+                                                    <StatusIcon className="w-3 h-3" />
+                                                    {status.label}
+                                                </span>
+                                            </div>
+                                            <p className="text-slate-600 mb-3">{complaint.description}</p>
+                                            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+                                                <div className="flex items-center gap-1">
+                                                    <Building2 className="w-4 h-4" />
+                                                    {complaint.property_name}
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <User className="w-4 h-4" />
+                                                    {complaint.tenant_name}
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <Clock className="w-4 h-4" />
+                                                    {formatDate(complaint.created_at)}
+                                                </div>
+                                            </div>
+                                            
+                                            {complaint.response && (
+                                                <div className="mt-4 p-3 bg-slate-50 rounded-lg border-l-4 border-emerald-500">
+                                                    <p className="text-sm font-medium text-slate-700 mb-1">Response:</p>
+                                                    <p className="text-sm text-slate-600">{complaint.response}</p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {canRespond && complaint.status !== 'resolved' && (
+                                            <div className="flex gap-2 lg:flex-col">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => openResponseDialog(complaint)}
+                                                    data-testid={`respond-complaint-${complaint.id}`}
+                                                >
+                                                    <Reply className="w-4 h-4 mr-1" />
+                                                    Respond
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() => handleResolve(complaint.id)}
+                                                    className="bg-emerald-600 hover:bg-emerald-700"
+                                                    data-testid={`resolve-complaint-${complaint.id}`}
+                                                >
+                                                    <CheckCircle className="w-4 h-4 mr-1" />
+                                                    Resolve
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </Card>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            {/* New Complaint Dialog */}
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className="sm:max-w-lg" data-testid="complaint-dialog">
+                    <DialogHeader>
+                        <DialogTitle>Submit a Complaint</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>Property</Label>
+                            <Select
+                                value={formData.property_id}
+                                onValueChange={(value) => setFormData({ ...formData, property_id: value })}
+                            >
+                                <SelectTrigger data-testid="complaint-property-select">
+                                    <SelectValue placeholder="Select property" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {properties.map((property) => (
+                                        <SelectItem key={property.id} value={property.id}>
+                                            {property.name} - {property.address}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Title</Label>
+                            <Input
+                                value={formData.title}
+                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                placeholder="Brief summary of the issue"
+                                required
+                                data-testid="complaint-title-input"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Priority</Label>
+                            <Select
+                                value={formData.priority}
+                                onValueChange={(value) => setFormData({ ...formData, priority: value })}
+                            >
+                                <SelectTrigger data-testid="complaint-priority-select">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="low">Low</SelectItem>
+                                    <SelectItem value="medium">Medium</SelectItem>
+                                    <SelectItem value="high">High</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Description</Label>
+                            <Textarea
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                placeholder="Describe the issue in detail"
+                                rows={4}
+                                required
+                                data-testid="complaint-description-input"
+                            />
+                        </div>
+
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="submit-complaint-button">
+                                Submit Complaint
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Response Dialog */}
+            <Dialog open={responseDialogOpen} onOpenChange={setResponseDialogOpen}>
+                <DialogContent className="sm:max-w-lg" data-testid="response-dialog">
+                    <DialogHeader>
+                        <DialogTitle>Respond to Complaint</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleResponse} className="space-y-4">
+                        {selectedComplaint && (
+                            <div className="p-3 bg-slate-50 rounded-lg">
+                                <p className="font-medium text-slate-800">{selectedComplaint.title}</p>
+                                <p className="text-sm text-slate-500 mt-1">{selectedComplaint.description}</p>
+                            </div>
+                        )}
+                        
+                        <div className="space-y-2">
+                            <Label>Your Response</Label>
+                            <Textarea
+                                value={responseText}
+                                onChange={(e) => setResponseText(e.target.value)}
+                                placeholder="Enter your response to the tenant"
+                                rows={4}
+                                required
+                                data-testid="response-text-input"
+                            />
+                        </div>
+
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setResponseDialogOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="send-response-button">
+                                Send Response
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </DashboardLayout>
+    );
+}
