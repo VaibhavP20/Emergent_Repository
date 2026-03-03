@@ -24,8 +24,13 @@ class PropertyManagementAPITester:
         auth_endpoints = ['auth/register', 'auth/login', 'auth/me', 'dashboard/stats']
         needs_slash = not any(endpoint.startswith(auth_ep) for auth_ep in auth_endpoints)
         
-        if needs_slash and not endpoint.endswith('/') and '?' not in endpoint:
-            endpoint = endpoint + '/'
+        if needs_slash and not endpoint.endswith('/'):
+            # Handle query parameters
+            if '?' in endpoint:
+                base_path, query_params = endpoint.split('?', 1)
+                endpoint = base_path + '/?' + query_params
+            else:
+                endpoint = endpoint + '/'
         url = f"{self.base_url}/api/{endpoint}"
         test_headers = {'Content-Type': 'application/json'}
         if self.token:
