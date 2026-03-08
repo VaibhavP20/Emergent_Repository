@@ -1,14 +1,33 @@
 import { useState, useEffect } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { getUsers, deleteUser } from '../services/api';
+import axios from 'axios';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import { Card } from '../components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '../components/ui/dialog';
 import { toast } from 'sonner';
-import { UserCircle, Mail, Phone, Trash2, Calendar } from 'lucide-react';
+import { UserCircle, Mail, Phone, Trash2, Calendar, Plus, Lock } from 'lucide-react';
+
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function LandlordsPage() {
     const [landlords, setLandlords] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        phone: '',
+    });
 
     useEffect(() => {
         fetchLandlords();
@@ -25,8 +44,24 @@ export default function LandlordsPage() {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to remove this landlord?')) return;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(`${API}/users/`, {
+                ...formData,
+                role: 'landlord'
+            });
+            toast.success('Landlord created successfully');
+            setDialogOpen(false);
+            resetForm();
+            fetchLandlords();
+        } catch (error) {
+            toast.error(error.response?.data?.email?.[0] || error.response?.data?.detail || 'Failed to create landlord');
+        }
+    };
+
+    const handleDelete = async (id, name) => {
+        if (!window.confirm(`Are you sure you want to remove ${name}? This will also delete their login access.`)) return;
         try {
             await deleteUser(id);
             toast.success('Landlord removed successfully');
@@ -34,6 +69,15 @@ export default function LandlordsPage() {
         } catch (error) {
             toast.error('Failed to remove landlord');
         }
+    };
+
+    const resetForm = () => {
+        setFormData({
+            name: '',
+            email: '',
+            password: '',
+            phone: '',
+        });
     };
 
     const formatDate = (dateString) => {
@@ -57,8 +101,18 @@ export default function LandlordsPage() {
     return (
         <DashboardLayout title="Landlords">
             <div className="space-y-6" data-testid="landlords-page">
-                <div>
-                    <p className="text-slate-500">Manage all landlords registered in the system</p>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <p className="text-slate-500">Manage all landlords registered in the system</p>
+                    </div>
+                    <Button 
+                        onClick={() => { resetForm(); setDialogOpen(true); }} 
+                        className="bg-slate-900 hover:bg-slate-800"
+                        data-testid="add-landlord-button"
+                    >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Landlord
+                    </Button>
                 </div>
 
                 {landlords.length === 0 ? (
@@ -67,7 +121,7 @@ export default function LandlordsPage() {
                             <UserCircle className="empty-state-icon" />
                             <h3 className="empty-state-title">No landlords yet</h3>
                             <p className="empty-state-description">
-                                Landlords will appear here once they register.
+                                Add your first landlord to get started.
                             </p>
                         </div>
                     </Card>
@@ -119,7 +173,7 @@ export default function LandlordsPage() {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    onClick={() => handleDelete(landlord.id)}
+                                                    onClick={() => handleDelete(landlord.id, landlord.name)}
                                                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                                     data-testid={`delete-landlord-${landlord.id}`}
                                                 >
@@ -134,6 +188,89 @@ export default function LandlordsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Add Landlord Dialog */}
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className="sm:max-w-md" data-testid="add-landlord-dialog">
+                    <DialogHeader>
+                        <DialogTitle>Add New Landlord</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Full Name</Label>
+                            <Input
+                                id="name"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                placeholder="John Doe"
+                                required
+                                data-testid="landlord-name-input"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email (Login Username)</Label>
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    placeholder="landlord@example.com"
+                                    className="pl-10"
+                                    required
+                                    data-testid="landlord-email-input"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="password">Password</Label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    placeholder="••••••••"
+                                    className="pl-10"
+                                    required
+                                    minLength={6}
+                                    data-testid="landlord-password-input"
+                                />
+                            </div>
+                            <p className="text-xs text-slate-500">Minimum 6 characters. Share this with the landlord for login.</p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="phone">Phone (Optional)</Label>
+                            <div className="relative">
+                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    id="phone"
+                                    type="tel"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    placeholder="+1 (555) 000-0000"
+                                    className="pl-10"
+                                    data-testid="landlord-phone-input"
+                                />
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="save-landlord-button">
+                                Create Landlord
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </DashboardLayout>
     );
 }
