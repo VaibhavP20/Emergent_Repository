@@ -190,7 +190,10 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [permissions.IsAuthenticated(), IsTenant()]
         if self.action in ['update', 'partial_update']:
-            return [permissions.IsAuthenticated(), IsPropertyManagerOrLandlord()]
+            return [permissions.IsAuthenticated(), IsPropertyManager()]
+        if self.action == 'list' or self.action == 'retrieve':
+            # Only property managers and tenants can view complaints
+            return [permissions.IsAuthenticated()]
         return [permissions.IsAuthenticated()]
 
     def get_serializer_class(self):
@@ -202,9 +205,10 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.role == 'tenant':
             return Complaint.objects.filter(tenant=user)
-        elif user.role == 'landlord':
-            return Complaint.objects.filter(property__landlord=user)
-        return Complaint.objects.all()
+        elif user.role == 'property_manager':
+            return Complaint.objects.all()
+        # Landlords cannot see complaints
+        return Complaint.objects.none()
 
     def perform_create(self, serializer):
         complaint = serializer.save()
