@@ -12,6 +12,7 @@ export const deleteProperty = (id) => axios.delete(`${API}/properties/${id}/`);
 // Users
 export const getUsers = (role) => axios.get(`${API}/users/`, { params: { role } });
 export const getUser = (id) => axios.get(`${API}/users/${id}/`);
+export const createUser = (data) => axios.post(`${API}/users/`, data);
 export const deleteUser = (id) => axios.delete(`${API}/users/${id}/`);
 
 // Leases
