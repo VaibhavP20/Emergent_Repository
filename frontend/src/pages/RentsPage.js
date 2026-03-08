@@ -37,7 +37,7 @@ export default function RentsPage() {
     });
 
     const isManager = user?.role === 'property_manager';
-    const canMarkPaid = isManager || user?.role === 'landlord';
+    const canMarkPaid = user?.role === 'property_manager';
 
     useEffect(() => {
         fetchData();

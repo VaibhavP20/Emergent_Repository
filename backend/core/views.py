@@ -147,7 +147,7 @@ class RentViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [permissions.IsAuthenticated(), IsPropertyManager()]
         if self.action in ['update', 'partial_update']:
-            return [permissions.IsAuthenticated(), IsPropertyManagerOrLandlord()]
+            return [permissions.IsAuthenticated(), IsPropertyManager()]
         return [permissions.IsAuthenticated()]
 
     def get_serializer_class(self):
