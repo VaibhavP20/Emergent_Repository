@@ -188,11 +188,10 @@ class ComplaintViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'create':
-            return [permissions.IsAuthenticated(), IsTenant()]
+            # Both tenants and property managers can create complaints
+            return [permissions.IsAuthenticated()]
         if self.action in ['update', 'partial_update']:
-            return [permissions.IsAuthenticated(), IsPropertyManager()]
-        if self.action == 'list' or self.action == 'retrieve':
-            # Only property managers and tenants can view complaints
+            # PM can respond to tenant complaints, Landlord can respond to manager complaints
             return [permissions.IsAuthenticated()]
         return [permissions.IsAuthenticated()]
 
@@ -204,36 +203,85 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.role == 'tenant':
-            return Complaint.objects.filter(tenant=user)
+            # Tenants see only their own complaints
+            return Complaint.objects.filter(tenant=user, complaint_type='tenant')
+        elif user.role == 'landlord':
+            # Landlords see only manager complaints for their properties
+            return Complaint.objects.filter(property__landlord=user, complaint_type='manager')
         elif user.role == 'property_manager':
+            # Property managers see all complaints
             return Complaint.objects.all()
-        # Landlords cannot see complaints
         return Complaint.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        # Only tenants and property managers can create complaints
+        if user.role not in ['tenant', 'property_manager']:
+            return Response({'detail': 'You cannot create complaints'}, status=status.HTTP_403_FORBIDDEN)
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = request.user
+        
+        # Property managers can respond to tenant complaints
+        if instance.complaint_type == 'tenant' and user.role != 'property_manager':
+            return Response({'detail': 'Only property managers can respond to tenant complaints'}, 
+                          status=status.HTTP_403_FORBIDDEN)
+        
+        # Landlords can respond to manager complaints (for their properties)
+        if instance.complaint_type == 'manager':
+            if user.role != 'landlord' or instance.property.landlord != user:
+                return Response({'detail': 'Only the property landlord can respond to this complaint'}, 
+                              status=status.HTTP_403_FORBIDDEN)
+        
+        return super().update(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         complaint = serializer.save()
-        # Notify property managers
-        managers = User.objects.filter(role='property_manager')
-        for manager in managers:
-            Notification.objects.create(
-                user=manager,
-                title='New Complaint',
-                message=f'New complaint from {complaint.tenant.name}: {complaint.title}',
-                notification_type='complaint'
-            )
+        user = self.request.user
+        
+        if user.role == 'tenant':
+            # Notify property managers about tenant complaint
+            managers = User.objects.filter(role='property_manager')
+            for manager in managers:
+                Notification.objects.create(
+                    user=manager,
+                    title='New Tenant Complaint',
+                    message=f'New complaint from {user.name}: {complaint.title}',
+                    notification_type='complaint'
+                )
+        elif user.role == 'property_manager':
+            # Notify landlord about manager complaint
+            if complaint.property.landlord:
+                Notification.objects.create(
+                    user=complaint.property.landlord,
+                    title='New Complaint from Property Manager',
+                    message=f'Property Manager has raised a concern: {complaint.title}',
+                    notification_type='complaint'
+                )
 
     def perform_update(self, serializer):
         instance = serializer.save()
         if instance.status == 'resolved' and not instance.resolved_at:
             instance.resolved_at = timezone.now()
             instance.save()
-        # Notify tenant
-        Notification.objects.create(
-            user=instance.tenant,
-            title='Complaint Updated',
-            message=f"Your complaint '{instance.title}' has been updated",
-            notification_type='complaint_update'
-        )
+        
+        # Notify the complaint creator
+        if instance.complaint_type == 'tenant' and instance.tenant:
+            Notification.objects.create(
+                user=instance.tenant,
+                title='Complaint Updated',
+                message=f"Your complaint '{instance.title}' has been updated",
+                notification_type='complaint_update'
+            )
+        elif instance.complaint_type == 'manager' and instance.created_by:
+            Notification.objects.create(
+                user=instance.created_by,
+                title='Complaint Response from Landlord',
+                message=f"Landlord responded to your complaint: {instance.title}",
+                notification_type='complaint_update'
+            )
 
 
 # Notification Views
