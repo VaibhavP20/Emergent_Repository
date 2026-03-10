@@ -123,10 +123,16 @@ class Complaint(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ]
+    TYPE_CHOICES = [
+        ('tenant', 'Tenant to Manager'),
+        ('manager', 'Manager to Landlord'),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='complaints')
-    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='complaints')
+    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_complaints', null=True, blank=True)
+    complaint_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='tenant')
     title = models.CharField(max_length=255)
     description = models.TextField()
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
