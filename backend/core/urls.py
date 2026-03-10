@@ -1,23 +1,46 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from .views import (
-    RegisterView, LoginView, MeView, UserViewSet, PropertyViewSet,
-    LeaseViewSet, RentViewSet, ComplaintViewSet, NotificationViewSet,
+    RegisterView, LoginView, MeView,
+    UserListView, UserDetailView,
+    PropertyListView, PropertyDetailView,
+    LeaseListView, LeaseDetailView,
+    RentListView, RentDetailView,
+    ComplaintListView, ComplaintDetailView,
+    NotificationListView, NotificationReadView, NotificationReadAllView,
     DashboardStatsView
 )
 
-router = DefaultRouter()
-router.register(r'users', UserViewSet, basename='users')
-router.register(r'properties', PropertyViewSet, basename='properties')
-router.register(r'leases', LeaseViewSet, basename='leases')
-router.register(r'rents', RentViewSet, basename='rents')
-router.register(r'complaints', ComplaintViewSet, basename='complaints')
-router.register(r'notifications', NotificationViewSet, basename='notifications')
-
 urlpatterns = [
+    # Auth
     path('auth/register', RegisterView.as_view(), name='register'),
     path('auth/login', LoginView.as_view(), name='login'),
     path('auth/me', MeView.as_view(), name='me'),
+    
+    # Users
+    path('users/', UserListView.as_view(), name='users-list'),
+    path('users/<str:user_id>/', UserDetailView.as_view(), name='users-detail'),
+    
+    # Properties
+    path('properties/', PropertyListView.as_view(), name='properties-list'),
+    path('properties/<str:property_id>/', PropertyDetailView.as_view(), name='properties-detail'),
+    
+    # Leases
+    path('leases/', LeaseListView.as_view(), name='leases-list'),
+    path('leases/<str:lease_id>/', LeaseDetailView.as_view(), name='leases-detail'),
+    
+    # Rents
+    path('rents/', RentListView.as_view(), name='rents-list'),
+    path('rents/<str:rent_id>/', RentDetailView.as_view(), name='rents-detail'),
+    
+    # Complaints
+    path('complaints/', ComplaintListView.as_view(), name='complaints-list'),
+    path('complaints/<str:complaint_id>/', ComplaintDetailView.as_view(), name='complaints-detail'),
+    
+    # Notifications
+    path('notifications/', NotificationListView.as_view(), name='notifications-list'),
+    path('notifications/<str:notification_id>/read/', NotificationReadView.as_view(), name='notifications-read'),
+    path('notifications/read-all/', NotificationReadAllView.as_view(), name='notifications-read-all'),
+    
+    # Dashboard
     path('dashboard/stats', DashboardStatsView.as_view(), name='dashboard-stats'),
-    path('', include(router.urls)),
 ]
