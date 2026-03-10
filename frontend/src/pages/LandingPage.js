@@ -70,7 +70,7 @@ export default function LandingPage() {
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/25">
                             <Home className="w-5 h-5 text-white" />
                         </div>
-                        <span className="text-xl font-semibold text-gray-900">PropManage</span>
+                        <span className="text-xl font-semibold text-gray-900">House2home</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <Link to="/login">
@@ -312,7 +312,7 @@ export default function LandingPage() {
                                     Ready to get started?
                                 </h2>
                                 <p className="text-xl text-violet-100 mb-8 max-w-xl mx-auto">
-                                    Join thousands of property professionals who trust PropManage for their daily operations.
+                                    Join thousands of property professionals who trust House2home for their daily operations.
                                 </p>
                                 <Link to="/register">
                                     <Button size="lg" className="bg-white text-violet-600 hover:bg-violet-50 rounded-full px-10 py-6 text-lg font-semibold shadow-xl">
@@ -334,13 +334,13 @@ export default function LandingPage() {
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center">
                                 <Home className="w-4 h-4 text-white" />
                             </div>
-                            <span className="font-semibold text-gray-900">PropManage</span>
+                            <span className="font-semibold text-gray-900">House2home</span>
                         </div>
                         <div className="flex items-center gap-8">
                             <Link to="/login" className="text-gray-600 hover:text-gray-900 transition-colors">Sign in</Link>
                             <Link to="/register" className="text-gray-600 hover:text-gray-900 transition-colors">Register</Link>
                         </div>
-                        <p className="text-gray-500 text-sm">© 2024 PropManage. All rights reserved.</p>
+                        <p className="text-gray-500 text-sm">© 2024 House2home Property Management. All rights reserved.</p>
                     </div>
                 </div>
             </footer>
