@@ -8,8 +8,7 @@ import {
     MessageSquare, 
     DollarSign,
     LogOut,
-    UserCircle,
-    Home
+    UserCircle
 } from 'lucide-react';
 
 export const Sidebar = () => {

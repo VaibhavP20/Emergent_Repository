@@ -9,7 +9,6 @@ import {
     DollarSign,
     LogOut,
     UserCircle,
-    Home,
     X
 } from 'lucide-react';
 

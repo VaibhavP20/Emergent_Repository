@@ -13,7 +13,7 @@ import {
     SelectValue,
 } from '../components/ui/select';
 import { toast } from 'sonner';
-import { Home, Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({

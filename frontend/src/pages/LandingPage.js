@@ -10,8 +10,7 @@ import {
     Check,
     Sparkles,
     Shield,
-    Zap,
-    Home
+    Zap
 } from 'lucide-react';
 
 export default function LandingPage() {
