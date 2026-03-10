@@ -440,10 +440,19 @@ class ComplaintListView(APIView):
             complaint_doc["tenant_name"] = user.name
             complaint_doc["complaint_type"] = "tenant"
             complaint_doc["created_by_name"] = user.name
-            # Notify managers
-            managers = list(users_collection.find({"role": "property_manager"}, {"_id": 0}))
-            for m in managers:
-                create_notification(m["id"], "New Tenant Complaint", f"New complaint from {user.name}: {data.get('title')}", "complaint")
+            # Notify managers using bulk insert
+            managers = list(users_collection.find({"role": "property_manager"}, {"id": 1, "_id": 0}))
+            if managers:
+                notifications = [{
+                    "id": str(uuid.uuid4()),
+                    "user_id": m["id"],
+                    "title": "New Tenant Complaint",
+                    "message": f"New complaint from {user.name}: {data.get('title')}",
+                    "notification_type": "complaint",
+                    "is_read": False,
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                } for m in managers]
+                notifications_collection.insert_many(notifications)
         else:
             complaint_doc["tenant_id"] = None
             complaint_doc["tenant_name"] = None
@@ -546,15 +555,15 @@ class DashboardStatsView(APIView):
             stats["total_landlords"] = users_collection.count_documents({"role": "landlord"})
             stats["pending_complaints"] = complaints_collection.count_documents({"status": "open"})
             stats["pending_rent"] = rents_collection.count_documents({"status": "pending"})
-            paid_rents = list(rents_collection.find({"status": "paid"}, {"_id": 0}))
+            paid_rents = list(rents_collection.find({"status": "paid"}, {"amount": 1, "_id": 0}))
             stats["total_rent_collected"] = sum(r.get("amount", 0) for r in paid_rents)
         
         elif user.role == 'landlord':
-            props = list(properties_collection.find({"landlord_id": user.id}, {"_id": 0}))
+            props = list(properties_collection.find({"landlord_id": user.id}, {"id": 1, "_id": 0}))
             property_ids = [p["id"] for p in props]
             stats["total_properties"] = len(props)
             
-            leases = list(leases_collection.find({"property_id": {"$in": property_ids}}, {"_id": 0}))
+            leases = list(leases_collection.find({"property_id": {"$in": property_ids}}, {"id": 1, "tenant_id": 1, "_id": 0}))
             lease_ids = [l["id"] for l in leases]
             stats["total_tenants"] = len(set(l["tenant_id"] for l in leases))
             
@@ -567,11 +576,11 @@ class DashboardStatsView(APIView):
                 "lease_id": {"$in": lease_ids},
                 "status": "pending"
             })
-            paid_rents = list(rents_collection.find({"lease_id": {"$in": lease_ids}, "status": "paid"}, {"_id": 0}))
+            paid_rents = list(rents_collection.find({"lease_id": {"$in": lease_ids}, "status": "paid"}, {"amount": 1, "_id": 0}))
             stats["total_rent_collected"] = sum(r.get("amount", 0) for r in paid_rents)
         
         elif user.role == 'tenant':
-            leases = list(leases_collection.find({"tenant_id": user.id}, {"_id": 0}))
+            leases = list(leases_collection.find({"tenant_id": user.id}, {"id": 1, "_id": 0}))
             lease_ids = [l["id"] for l in leases]
             stats["total_properties"] = len(leases)
             stats["pending_complaints"] = complaints_collection.count_documents({"tenant_id": user.id, "status": "open"})
