@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timedelta
 
 class PropertyManagementAPITester:
-    def __init__(self, base_url="https://rental-portal-23.preview.emergentagent.com"):
+    def __init__(self, base_url="https://property-hub-507.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.user_id = None
