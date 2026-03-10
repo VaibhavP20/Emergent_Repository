@@ -44,6 +44,7 @@ export const Sidebar = () => {
                 { to: '/properties', icon: Building2, label: 'My Properties' },
                 { to: '/leases', icon: FileText, label: 'Leases' },
                 { to: '/rents', icon: DollarSign, label: 'Rent Tracking' },
+                { to: '/complaints', icon: MessageSquare, label: 'Complaints' },
             ];
         }
 

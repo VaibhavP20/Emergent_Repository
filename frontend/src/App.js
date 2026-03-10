@@ -160,7 +160,7 @@ function AppRoutes() {
             <Route
                 path="/complaints"
                 element={
-                    <ProtectedRoute allowedRoles={['property_manager']}>
+                    <ProtectedRoute allowedRoles={['property_manager', 'landlord']}>
                         <ComplaintsPage />
                     </ProtectedRoute>
                 }
