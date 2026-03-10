@@ -48,18 +48,18 @@ export default function LandingPage() {
     ];
 
     const roles = [
-        { name: 'Property Managers', color: 'from-violet-500 to-purple-600' },
+        { name: 'Property Managers', color: 'from-emerald-500 to-teal-600' },
         { name: 'Landlords', color: 'from-blue-500 to-cyan-500' },
-        { name: 'Tenants', color: 'from-pink-500 to-rose-500' }
+        { name: 'Tenants', color: 'from-teal-500 to-blue-500' }
     ];
 
     return (
         <div className="min-h-screen bg-[#FAFAFA] overflow-hidden" data-testid="landing-page">
             {/* Floating gradient orbs */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-blue-400/30 via-purple-400/30 to-pink-400/30 blur-3xl animate-pulse" />
-                <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-cyan-400/20 via-blue-400/20 to-violet-400/20 blur-3xl" />
-                <div className="absolute -bottom-40 right-1/3 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-pink-400/25 via-rose-400/25 to-orange-400/25 blur-3xl" />
+                <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-emerald-400/30 via-teal-400/30 to-blue-400/30 blur-3xl animate-pulse" />
+                <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-cyan-400/20 via-blue-400/20 to-teal-400/20 blur-3xl" />
+                <div className="absolute -bottom-40 right-1/3 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-teal-400/25 via-emerald-400/25 to-cyan-400/25 blur-3xl" />
             </div>
 
             {/* Navigation */}
@@ -90,14 +90,14 @@ export default function LandingPage() {
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         {/* Left content */}
                         <div className="space-y-8">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-100 to-pink-100 text-violet-700 text-sm font-medium">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-100 to-blue-100 text-emerald-700 text-sm font-medium">
                                 <Sparkles className="w-4 h-4" />
                                 Simplify your property management
                             </div>
                             
                             <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                                 Property management,{' '}
-                                <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 bg-clip-text text-transparent">
                                     reimagined
                                 </span>
                             </h1>
@@ -109,7 +109,7 @@ export default function LandingPage() {
 
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <Link to="/register">
-                                    <Button size="lg" className="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white rounded-full px-8 py-6 text-lg shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30">
+                                    <Button size="lg" className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white rounded-full px-8 py-6 text-lg shadow-lg shadow-emerald-500/25 transition-all hover:shadow-xl hover:shadow-emerald-500/30">
                                         Start for free
                                         <ArrowRight className="w-5 h-5 ml-2" />
                                     </Button>
@@ -134,13 +134,13 @@ export default function LandingPage() {
                         {/* Right - Floating cards with gradient */}
                         <div className="relative h-[500px] hidden lg:block">
                             {/* Main gradient card */}
-                            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 shadow-2xl shadow-purple-500/30 overflow-hidden">
+                            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-emerald-400 via-teal-500 to-blue-500 shadow-2xl shadow-teal-500/30 overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
                                 
                                 {/* Floating UI elements */}
                                 <div className="absolute top-8 left-8 right-8 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-pink-500" />
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-blue-500" />
                                         <div>
                                             <p className="font-medium text-gray-900">Welcome back!</p>
                                             <p className="text-sm text-gray-500">Manage your properties</p>
@@ -152,7 +152,7 @@ export default function LandingPage() {
                                     <p className="text-xs text-gray-500 mb-1">Properties</p>
                                     <p className="text-2xl font-bold text-gray-900">24</p>
                                     <div className="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
-                                        <div className="h-full w-3/4 bg-gradient-to-r from-violet-500 to-pink-500 rounded-full" />
+                                        <div className="h-full w-3/4 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full" />
                                     </div>
                                 </div>
 
@@ -165,7 +165,7 @@ export default function LandingPage() {
                                 <div className="absolute bottom-24 left-8 right-8 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
                                     <div className="flex items-center justify-between mb-3">
                                         <p className="font-medium text-gray-900">Recent Activity</p>
-                                        <span className="text-xs text-violet-600">View all</span>
+                                        <span className="text-xs text-emerald-600">View all</span>
                                     </div>
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-3">
