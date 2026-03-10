@@ -67,9 +67,7 @@ export default function LandingPage() {
             <nav className="relative z-50 px-6 py-4">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/25">
-                            <Home className="w-5 h-5 text-white" />
-                        </div>
+                        <img src="/logo.png" alt="House2home" className="w-10 h-10 rounded-xl object-cover" />
                         <span className="text-xl font-semibold text-gray-900">House2home</span>
                     </div>
                     <div className="flex items-center gap-3">
@@ -331,9 +329,7 @@ export default function LandingPage() {
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center">
-                                <Home className="w-4 h-4 text-white" />
-                            </div>
+                            <img src="/logo.png" alt="House2home" className="w-8 h-8 rounded-lg object-cover" />
                             <span className="font-semibold text-gray-900">House2home</span>
                         </div>
                         <div className="flex items-center gap-8">

@@ -63,9 +63,7 @@ export const Sidebar = () => {
         <aside className="sidebar w-64 fixed h-full hidden md:flex flex-col" data-testid="sidebar">
             <div className="p-6 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
-                        <Home className="w-5 h-5 text-white" />
-                    </div>
+                    <img src="/logo.png" alt="House2home" className="w-10 h-10 rounded-lg object-cover" />
                     <div>
                         <h1 className="text-lg font-semibold text-white">House2home</h1>
                         <p className="text-xs text-slate-400">Property Management</p>

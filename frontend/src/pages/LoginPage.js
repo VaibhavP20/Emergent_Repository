@@ -33,9 +33,7 @@ export default function LoginPage() {
         <div className="min-h-screen login-bg flex items-center justify-center p-4" data-testid="login-page">
             <div className="w-full max-w-md animate-fade-in">
                 <div className="flex items-center justify-center gap-3 mb-8">
-                    <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                        <Home className="w-6 h-6 text-white" />
-                    </div>
+                    <img src="/logo.png" alt="House2home" className="w-12 h-12 rounded-xl shadow-lg object-cover" />
                     <div>
                         <h1 className="text-2xl font-bold text-white">House2home</h1>
                         <p className="text-sm text-slate-300">Property Management</p>

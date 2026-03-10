@@ -71,9 +71,7 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
             <aside className="fixed inset-y-0 left-0 w-64 bg-slate-900 z-50 md:hidden flex flex-col animate-slide-in">
                 <div className="p-6 border-b border-white/10 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
-                            <Home className="w-5 h-5 text-white" />
-                        </div>
+                        <img src="/logo.png" alt="House2home" className="w-10 h-10 rounded-lg object-cover" />
                         <div>
                             <h1 className="text-lg font-semibold text-white">House2home</h1>
                             <p className="text-xs text-slate-400">Property Management</p>
