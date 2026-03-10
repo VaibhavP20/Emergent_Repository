@@ -210,11 +210,11 @@ export default function LandingPage() {
                         {features.map((feature, index) => (
                             <div 
                                 key={index}
-                                className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300"
+                                className="group p-6 rounded-2xl bg-white border border-gray-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300"
                                 data-testid={`feature-${index}`}
                             >
-                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-pink-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <feature.icon className="w-6 h-6 text-violet-600" />
+                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <feature.icon className="w-6 h-6 text-emerald-600" />
                                 </div>
                                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
                                 <p className="text-gray-600">{feature.description}</p>
@@ -239,16 +239,16 @@ export default function LandingPage() {
                     <div className="grid md:grid-cols-3 gap-8">
                         {/* Property Manager Card */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-purple-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
-                            <div className="relative bg-gradient-to-br from-violet-500 to-purple-600 rounded-3xl p-8 text-white">
+                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+                            <div className="relative bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-8 text-white">
                                 <Shield className="w-10 h-10 mb-4" />
                                 <h3 className="text-2xl font-bold mb-3">Property Managers</h3>
-                                <p className="text-violet-100 mb-6">Complete control over all properties, tenants, and operations.</p>
+                                <p className="text-emerald-100 mb-6">Complete control over all properties, tenants, and operations.</p>
                                 <ul className="space-y-3">
                                     {['Manage properties & units', 'Add tenants & landlords', 'Track all payments', 'Handle complaints'].map((item, i) => (
                                         <li key={i} className="flex items-center gap-2">
-                                            <Check className="w-5 h-5 text-violet-200" />
-                                            <span className="text-violet-100">{item}</span>
+                                            <Check className="w-5 h-5 text-emerald-200" />
+                                            <span className="text-emerald-100">{item}</span>
                                         </li>
                                     ))}
                                 </ul>
@@ -275,16 +275,16 @@ export default function LandingPage() {
 
                         {/* Tenant Card */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-pink-500 to-rose-500 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
-                            <div className="relative bg-gradient-to-br from-pink-500 to-rose-500 rounded-3xl p-8 text-white">
+                            <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-blue-500 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+                            <div className="relative bg-gradient-to-br from-teal-500 to-blue-500 rounded-3xl p-8 text-white">
                                 <Users className="w-10 h-10 mb-4" />
                                 <h3 className="text-2xl font-bold mb-3">Tenants</h3>
-                                <p className="text-pink-100 mb-6">Stay informed and communicate with ease.</p>
+                                <p className="text-teal-100 mb-6">Stay informed and communicate with ease.</p>
                                 <ul className="space-y-3">
                                     {['View lease details', 'Check rent status', 'Submit complaints', 'Track resolutions'].map((item, i) => (
                                         <li key={i} className="flex items-center gap-2">
-                                            <Check className="w-5 h-5 text-pink-200" />
-                                            <span className="text-pink-100">{item}</span>
+                                            <Check className="w-5 h-5 text-teal-200" />
+                                            <span className="text-teal-100">{item}</span>
                                         </li>
                                     ))}
                                 </ul>
@@ -298,8 +298,8 @@ export default function LandingPage() {
             <section className="relative z-10 px-6 py-24">
                 <div className="max-w-4xl mx-auto">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-50" />
-                        <div className="relative bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 rounded-3xl p-12 text-center text-white overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 rounded-3xl blur-2xl opacity-50" />
+                        <div className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 rounded-3xl p-12 text-center text-white overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
                             
@@ -308,11 +308,11 @@ export default function LandingPage() {
                                 <h2 className="text-4xl font-bold mb-4">
                                     Ready to get started?
                                 </h2>
-                                <p className="text-xl text-violet-100 mb-8 max-w-xl mx-auto">
+                                <p className="text-xl text-emerald-100 mb-8 max-w-xl mx-auto">
                                     Join thousands of property professionals who trust House2home for their daily operations.
                                 </p>
                                 <Link to="/register">
-                                    <Button size="lg" className="bg-white text-violet-600 hover:bg-violet-50 rounded-full px-10 py-6 text-lg font-semibold shadow-xl">
+                                    <Button size="lg" className="bg-white text-emerald-600 hover:bg-emerald-50 rounded-full px-10 py-6 text-lg font-semibold shadow-xl">
                                         Create free account
                                         <ArrowRight className="w-5 h-5 ml-2" />
                                     </Button>
