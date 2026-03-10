@@ -122,20 +122,41 @@ class RentUpdateSerializer(serializers.ModelSerializer):
 
 class ComplaintSerializer(serializers.ModelSerializer):
     property_id = serializers.UUIDField(write_only=True)
-    tenant_id = serializers.UUIDField(read_only=True, source='tenant.id')
-    tenant_name = serializers.CharField(source='tenant.name', read_only=True)
+    tenant_id = serializers.UUIDField(read_only=True, source='tenant.id', allow_null=True)
+    tenant_name = serializers.SerializerMethodField()
     property_name = serializers.CharField(source='property.name', read_only=True)
+    created_by_name = serializers.SerializerMethodField()
+    complaint_type = serializers.CharField(default='tenant')
 
     class Meta:
         model = Complaint
         fields = ['id', 'property_id', 'tenant_id', 'title', 'description', 'priority',
-                  'status', 'response', 'tenant_name', 'property_name', 'created_at', 'resolved_at']
+                  'status', 'response', 'tenant_name', 'property_name', 'created_at', 
+                  'resolved_at', 'complaint_type', 'created_by_name']
         read_only_fields = ['id', 'status', 'response', 'created_at', 'resolved_at']
+
+    def get_tenant_name(self, obj):
+        if obj.tenant:
+            return obj.tenant.name
+        return None
+
+    def get_created_by_name(self, obj):
+        if obj.created_by:
+            return obj.created_by.name
+        return obj.tenant.name if obj.tenant else None
 
     def create(self, validated_data):
         property_id = validated_data.pop('property_id')
         validated_data['property'] = Property.objects.get(id=property_id)
-        validated_data['tenant'] = self.context['request'].user
+        user = self.context['request'].user
+        
+        if user.role == 'tenant':
+            validated_data['tenant'] = user
+            validated_data['complaint_type'] = 'tenant'
+        elif user.role == 'property_manager':
+            validated_data['created_by'] = user
+            validated_data['complaint_type'] = 'manager'
+        
         return super().create(validated_data)
 
 
