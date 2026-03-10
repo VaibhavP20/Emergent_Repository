@@ -75,8 +75,8 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
                             <Home className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-lg font-semibold text-white">PropManage</h1>
-                            <p className="text-xs text-slate-400">Property Portal</p>
+                            <h1 className="text-lg font-semibold text-white">House2home</h1>
+                            <p className="text-xs text-slate-400">Property Management</p>
                         </div>
                     </div>
                     <button 

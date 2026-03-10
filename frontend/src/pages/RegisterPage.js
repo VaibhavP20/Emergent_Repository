@@ -53,8 +53,8 @@ export default function RegisterPage() {
                         <Home className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">PropManage</h1>
-                        <p className="text-sm text-slate-300">Property Management Portal</p>
+                        <h1 className="text-2xl font-bold text-white">House2home</h1>
+                        <p className="text-sm text-slate-300">Property Management</p>
                     </div>
                 </div>
 
@@ -186,7 +186,7 @@ export default function RegisterPage() {
                 </Card>
 
                 <p className="text-center text-xs text-slate-400 mt-6">
-                    © 2024 PropManage. All rights reserved.
+                    © 2024 House2home Property Management. All rights reserved.
                 </p>
             </div>
         </div>
