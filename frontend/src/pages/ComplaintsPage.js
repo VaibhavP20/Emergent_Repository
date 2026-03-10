@@ -21,6 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { toast } from 'sonner';
 import { Plus, MessageSquare, AlertCircle, CheckCircle, Clock, Building2, User, Reply } from 'lucide-react';
 
@@ -32,6 +33,7 @@ export default function ComplaintsPage() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [responseDialogOpen, setResponseDialogOpen] = useState(false);
     const [selectedComplaint, setSelectedComplaint] = useState(null);
+    const [activeTab, setActiveTab] = useState('all');
     const [formData, setFormData] = useState({
         property_id: '',
         title: '',
@@ -41,7 +43,9 @@ export default function ComplaintsPage() {
     const [responseText, setResponseText] = useState('');
 
     const isTenant = user?.role === 'tenant';
-    const canRespond = user?.role === 'property_manager' || user?.role === 'landlord';
+    const isManager = user?.role === 'property_manager';
+    const isLandlord = user?.role === 'landlord';
+    const canCreate = isTenant || isManager;
 
     useEffect(() => {
         fetchData();
@@ -51,7 +55,7 @@ export default function ComplaintsPage() {
         try {
             const [complaintsRes, propertiesRes] = await Promise.all([
                 getComplaints(),
-                isTenant ? getProperties() : Promise.resolve({ data: [] }),
+                (isTenant || isManager) ? getProperties() : Promise.resolve({ data: [] }),
             ]);
             setComplaints(complaintsRes.data);
             setProperties(propertiesRes.data);
@@ -89,7 +93,7 @@ export default function ComplaintsPage() {
             setResponseText('');
             fetchData();
         } catch (error) {
-            toast.error('Failed to send response');
+            toast.error(error.response?.data?.detail || 'Failed to send response');
         }
     };
 
@@ -99,7 +103,7 @@ export default function ComplaintsPage() {
             toast.success('Complaint marked as resolved');
             fetchData();
         } catch (error) {
-            toast.error('Failed to resolve complaint');
+            toast.error(error.response?.data?.detail || 'Failed to resolve complaint');
         }
     };
 
@@ -154,9 +158,47 @@ export default function ComplaintsPage() {
         }
     };
 
+    const canRespond = (complaint) => {
+        // Property managers can respond to tenant complaints
+        if (complaint.complaint_type === 'tenant' && isManager) return true;
+        // Landlords can respond to manager complaints
+        if (complaint.complaint_type === 'manager' && isLandlord) return true;
+        return false;
+    };
+
+    // Filter complaints based on tab
+    const filteredComplaints = complaints.filter(c => {
+        if (activeTab === 'all') return true;
+        if (activeTab === 'tenant') return c.complaint_type === 'tenant';
+        if (activeTab === 'manager') return c.complaint_type === 'manager';
+        return true;
+    });
+
+    // Get page title and description based on role
+    const getPageInfo = () => {
+        if (isTenant) {
+            return {
+                title: 'My Complaints',
+                description: 'Submit and track your complaints'
+            };
+        }
+        if (isLandlord) {
+            return {
+                title: 'Property Manager Complaints',
+                description: 'View and respond to complaints from property managers'
+            };
+        }
+        return {
+            title: 'Complaints',
+            description: 'Manage tenant complaints and send complaints to landlords'
+        };
+    };
+
+    const pageInfo = getPageInfo();
+
     if (loading) {
         return (
-            <DashboardLayout title="Complaints">
+            <DashboardLayout title={pageInfo.title}>
                 <div className="flex items-center justify-center h-64">
                     <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
                 </div>
@@ -165,35 +207,46 @@ export default function ComplaintsPage() {
     }
 
     return (
-        <DashboardLayout title="Complaints">
+        <DashboardLayout title={pageInfo.title}>
             <div className="space-y-6" data-testid="complaints-page">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <p className="text-slate-500">
-                            {isTenant ? 'Submit and track your complaints' : 'View and address tenant complaints'}
-                        </p>
+                        <p className="text-slate-500">{pageInfo.description}</p>
                     </div>
-                    {isTenant && (
+                    {canCreate && (
                         <Button onClick={() => { resetForm(); setDialogOpen(true); }} className="bg-slate-900 hover:bg-slate-800" data-testid="new-complaint-button">
                             <Plus className="w-4 h-4 mr-2" />
-                            New Complaint
+                            {isTenant ? 'New Complaint' : 'Complaint to Landlord'}
                         </Button>
                     )}
                 </div>
 
-                {complaints.length === 0 ? (
+                {/* Tabs for Property Manager to filter complaint types */}
+                {isManager && (
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                        <TabsList>
+                            <TabsTrigger value="all" data-testid="tab-all">All Complaints</TabsTrigger>
+                            <TabsTrigger value="tenant" data-testid="tab-tenant">From Tenants</TabsTrigger>
+                            <TabsTrigger value="manager" data-testid="tab-manager">To Landlords</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                )}
+
+                {filteredComplaints.length === 0 ? (
                     <Card className="p-12">
                         <div className="empty-state">
                             <MessageSquare className="empty-state-icon" />
                             <h3 className="empty-state-title">No complaints</h3>
                             <p className="empty-state-description">
-                                {isTenant ? 'Submit a complaint if you have any issues.' : 'No complaints to review.'}
+                                {isTenant ? 'Submit a complaint if you have any issues.' : 
+                                 isLandlord ? 'No complaints from property managers.' :
+                                 'No complaints to review.'}
                             </p>
                         </div>
                     </Card>
                 ) : (
                     <div className="space-y-4">
-                        {complaints.map((complaint, index) => {
+                        {filteredComplaints.map((complaint, index) => {
                             const status = getStatusBadge(complaint.status);
                             const StatusIcon = status.icon;
                             return (
@@ -209,6 +262,11 @@ export default function ComplaintsPage() {
                                                     <StatusIcon className="w-3 h-3" />
                                                     {status.label}
                                                 </span>
+                                                {isManager && (
+                                                    <span className={`badge ${complaint.complaint_type === 'tenant' ? 'badge-info' : 'badge-warning'}`}>
+                                                        {complaint.complaint_type === 'tenant' ? 'From Tenant' : 'To Landlord'}
+                                                    </span>
+                                                )}
                                             </div>
                                             <p className="text-slate-600 mb-3">{complaint.description}</p>
                                             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
@@ -218,7 +276,9 @@ export default function ComplaintsPage() {
                                                 </div>
                                                 <div className="flex items-center gap-1">
                                                     <User className="w-4 h-4" />
-                                                    {complaint.tenant_name}
+                                                    {complaint.complaint_type === 'tenant' 
+                                                        ? complaint.tenant_name 
+                                                        : `From: ${complaint.created_by_name || 'Property Manager'}`}
                                                 </div>
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="w-4 h-4" />
@@ -228,13 +288,15 @@ export default function ComplaintsPage() {
                                             
                                             {complaint.response && (
                                                 <div className="mt-4 p-3 bg-slate-50 rounded-lg border-l-4 border-emerald-500">
-                                                    <p className="text-sm font-medium text-slate-700 mb-1">Response:</p>
+                                                    <p className="text-sm font-medium text-slate-700 mb-1">
+                                                        {complaint.complaint_type === 'tenant' ? 'Response from Property Manager:' : 'Response from Landlord:'}
+                                                    </p>
                                                     <p className="text-sm text-slate-600">{complaint.response}</p>
                                                 </div>
                                             )}
                                         </div>
 
-                                        {canRespond && complaint.status !== 'resolved' && (
+                                        {canRespond(complaint) && complaint.status !== 'resolved' && (
                                             <div className="flex gap-2 lg:flex-col">
                                                 <Button
                                                     variant="outline"
@@ -268,7 +330,9 @@ export default function ComplaintsPage() {
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className="sm:max-w-lg" data-testid="complaint-dialog">
                     <DialogHeader>
-                        <DialogTitle>Submit a Complaint</DialogTitle>
+                        <DialogTitle>
+                            {isTenant ? 'Submit a Complaint' : 'Send Complaint to Landlord'}
+                        </DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
@@ -284,10 +348,16 @@ export default function ComplaintsPage() {
                                     {properties.map((property) => (
                                         <SelectItem key={property.id} value={property.id}>
                                             {property.name} - {property.address}
+                                            {isManager && property.landlord_name && ` (${property.landlord_name})`}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
+                            {isManager && (
+                                <p className="text-xs text-slate-500">
+                                    This complaint will be sent to the landlord assigned to this property.
+                                </p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -361,7 +431,7 @@ export default function ComplaintsPage() {
                             <Textarea
                                 value={responseText}
                                 onChange={(e) => setResponseText(e.target.value)}
-                                placeholder="Enter your response to the tenant"
+                                placeholder={isLandlord ? "Enter your response to the property manager" : "Enter your response to the tenant"}
                                 rows={4}
                                 required
                                 data-testid="response-text-input"
