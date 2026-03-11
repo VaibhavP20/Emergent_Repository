@@ -99,6 +99,14 @@ function AppRoutes() {
                 }
             />
             <Route
+                path="/admin"
+                element={
+                    <PublicRoute>
+                        <AdminLoginPage />
+                    </PublicRoute>
+                }
+            />
+            <Route
                 path="/register"
                 element={
                     <PublicRoute>
