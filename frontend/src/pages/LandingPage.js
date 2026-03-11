@@ -39,11 +39,6 @@ export default function LandingPage() {
             icon: Users,
             title: 'Tenant Management',
             description: 'Organize tenant information and history'
-        },
-        {
-            icon: Shield,
-            title: 'Secure Access',
-            description: 'Role-based permissions for complete control'
         }
     ];
 
