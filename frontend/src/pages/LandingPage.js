@@ -9,7 +9,6 @@ import {
     ArrowRight,
     Check,
     Sparkles,
-    Shield,
     Zap
 } from 'lucide-react';
 
