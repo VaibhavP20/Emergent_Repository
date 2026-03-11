@@ -127,7 +127,6 @@ export default function RegisterPage() {
                                     <SelectContent>
                                         <SelectItem value="tenant" data-testid="role-tenant">Tenant</SelectItem>
                                         <SelectItem value="landlord" data-testid="role-landlord">Landlord</SelectItem>
-                                        <SelectItem value="property_manager" data-testid="role-manager">Property Manager</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
