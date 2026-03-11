@@ -48,9 +48,8 @@ export default function LandingPage() {
     ];
 
     const roles = [
-        { name: 'Property Managers', color: 'from-emerald-500 to-teal-600' },
         { name: 'Landlords', color: 'from-blue-500 to-cyan-500' },
-        { name: 'Tenants', color: 'from-teal-500 to-blue-500' }
+        { name: 'Tenants', color: 'from-teal-500 to-emerald-500' }
     ];
 
     return (
@@ -236,25 +235,7 @@ export default function LandingPage() {
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {/* Property Manager Card */}
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
-                            <div className="relative bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-8 text-white">
-                                <Shield className="w-10 h-10 mb-4" />
-                                <h3 className="text-2xl font-bold mb-3">Property Managers</h3>
-                                <p className="text-emerald-100 mb-6">Complete control over all properties, tenants, and operations.</p>
-                                <ul className="space-y-3">
-                                    {['Manage properties & units', 'Add tenants & landlords', 'Track all payments', 'Handle complaints'].map((item, i) => (
-                                        <li key={i} className="flex items-center gap-2">
-                                            <Check className="w-5 h-5 text-emerald-200" />
-                                            <span className="text-emerald-100">{item}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-
+                    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {/* Landlord Card */}
                         <div className="relative group">
                             <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
@@ -275,8 +256,8 @@ export default function LandingPage() {
 
                         {/* Tenant Card */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-blue-500 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
-                            <div className="relative bg-gradient-to-br from-teal-500 to-blue-500 rounded-3xl p-8 text-white">
+                            <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+                            <div className="relative bg-gradient-to-br from-teal-500 to-emerald-500 rounded-3xl p-8 text-white">
                                 <Users className="w-10 h-10 mb-4" />
                                 <h3 className="text-2xl font-bold mb-3">Tenants</h3>
                                 <p className="text-teal-100 mb-6">Stay informed and communicate with ease.</p>
