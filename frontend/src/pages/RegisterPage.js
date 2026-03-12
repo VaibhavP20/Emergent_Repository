@@ -124,7 +124,7 @@ export default function RegisterPage() {
                                     <SelectTrigger data-testid="role-select">
                                         <SelectValue placeholder="Select your role" />
                                     </SelectTrigger>
-                                    <SelectContent side="bottom" align="start">
+                                    <SelectContent position="item-aligned">
                                         <SelectItem value="landlord" data-testid="role-landlord">Landlord</SelectItem>
                                         <SelectItem value="tenant" data-testid="role-tenant">Tenant</SelectItem>
                                     </SelectContent>
