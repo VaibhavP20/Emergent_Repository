@@ -100,20 +100,6 @@ export default function LandingPage() {
                                 Streamline operations, track payments, and communicate seamlessly.
                             </p>
 
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                <Link to="/register">
-                                    <Button size="lg" className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white rounded-full px-8 py-6 text-lg shadow-lg shadow-emerald-500/25 transition-all hover:shadow-xl hover:shadow-emerald-500/30">
-                                        Start for free
-                                        <ArrowRight className="w-5 h-5 ml-2" />
-                                    </Button>
-                                </Link>
-                                <Link to="/login">
-                                    <Button size="lg" variant="outline" className="rounded-full px-8 py-6 text-lg border-gray-300">
-                                        View demo
-                                    </Button>
-                                </Link>
-                            </div>
-
                             <div className="flex items-center gap-8 pt-4">
                                 {roles.map((role, i) => (
                                     <div key={i} className="flex items-center gap-2">
