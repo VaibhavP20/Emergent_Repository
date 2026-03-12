@@ -555,15 +555,20 @@ class DashboardStatsView(APIView):
             stats["total_landlords"] = users_collection.count_documents({"role": "landlord"})
             stats["pending_complaints"] = complaints_collection.count_documents({"status": "open"})
             stats["pending_rent"] = rents_collection.count_documents({"status": "pending"})
-            paid_rents = list(rents_collection.find({"status": "paid"}, {"amount": 1, "_id": 0}))
-            stats["total_rent_collected"] = sum(r.get("amount", 0) for r in paid_rents)
+            # Use aggregation for sum instead of fetching all records
+            pipeline = [
+                {"$match": {"status": "paid"}},
+                {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+            ]
+            result = list(rents_collection.aggregate(pipeline))
+            stats["total_rent_collected"] = result[0]["total"] if result else 0
         
         elif user.role == 'landlord':
-            props = list(properties_collection.find({"landlord_id": user.id}, {"id": 1, "_id": 0}))
+            props = list(properties_collection.find({"landlord_id": user.id}, {"id": 1, "_id": 0}).limit(100))
             property_ids = [p["id"] for p in props]
             stats["total_properties"] = len(props)
             
-            leases = list(leases_collection.find({"property_id": {"$in": property_ids}}, {"id": 1, "tenant_id": 1, "_id": 0}))
+            leases = list(leases_collection.find({"property_id": {"$in": property_ids}}, {"id": 1, "tenant_id": 1, "_id": 0}).limit(500))
             lease_ids = [l["id"] for l in leases]
             stats["total_tenants"] = len(set(l["tenant_id"] for l in leases))
             
@@ -576,11 +581,16 @@ class DashboardStatsView(APIView):
                 "lease_id": {"$in": lease_ids},
                 "status": "pending"
             })
-            paid_rents = list(rents_collection.find({"lease_id": {"$in": lease_ids}, "status": "paid"}, {"amount": 1, "_id": 0}))
-            stats["total_rent_collected"] = sum(r.get("amount", 0) for r in paid_rents)
+            # Use aggregation for sum instead of fetching all records
+            pipeline = [
+                {"$match": {"lease_id": {"$in": lease_ids}, "status": "paid"}},
+                {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+            ]
+            result = list(rents_collection.aggregate(pipeline))
+            stats["total_rent_collected"] = result[0]["total"] if result else 0
         
         elif user.role == 'tenant':
-            leases = list(leases_collection.find({"tenant_id": user.id}, {"id": 1, "_id": 0}))
+            leases = list(leases_collection.find({"tenant_id": user.id}, {"id": 1, "_id": 0}).limit(100))
             lease_ids = [l["id"] for l in leases]
             stats["total_properties"] = len(leases)
             stats["pending_complaints"] = complaints_collection.count_documents({"tenant_id": user.id, "status": "open"})
