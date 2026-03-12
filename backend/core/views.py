@@ -332,17 +332,17 @@ class RentListView(APIView):
         query = {}
         
         if user.role == 'tenant':
-            leases = list(leases_collection.find({"tenant_id": user.id}, {"id": 1, "_id": 0}))
+            leases = list(leases_collection.find({"tenant_id": user.id}, {"id": 1, "_id": 0}).limit(100))
             lease_ids = [l["id"] for l in leases]
             query["lease_id"] = {"$in": lease_ids}
         elif user.role == 'landlord':
-            props = list(properties_collection.find({"landlord_id": user.id}, {"id": 1, "_id": 0}))
+            props = list(properties_collection.find({"landlord_id": user.id}, {"id": 1, "_id": 0}).limit(100))
             property_ids = [p["id"] for p in props]
-            leases = list(leases_collection.find({"property_id": {"$in": property_ids}}, {"id": 1, "_id": 0}))
+            leases = list(leases_collection.find({"property_id": {"$in": property_ids}}, {"id": 1, "_id": 0}).limit(500))
             lease_ids = [l["id"] for l in leases]
             query["lease_id"] = {"$in": lease_ids}
         
-        rents = list(rents_collection.find(query, {"_id": 0}))
+        rents = list(rents_collection.find(query, {"_id": 0}).limit(1000))
         return Response(rents)
 
     def post(self, request):
@@ -407,11 +407,11 @@ class ComplaintListView(APIView):
         if user.role == 'tenant':
             query = {"tenant_id": user.id, "complaint_type": "tenant"}
         elif user.role == 'landlord':
-            props = list(properties_collection.find({"landlord_id": user.id}, {"_id": 0}))
+            props = list(properties_collection.find({"landlord_id": user.id}, {"id": 1, "_id": 0}).limit(100))
             property_ids = [p["id"] for p in props]
             query = {"property_id": {"$in": property_ids}, "complaint_type": "manager"}
         
-        complaints = list(complaints_collection.find(query, {"_id": 0}))
+        complaints = list(complaints_collection.find(query, {"_id": 0}).limit(500))
         return Response(complaints)
 
     def post(self, request):
