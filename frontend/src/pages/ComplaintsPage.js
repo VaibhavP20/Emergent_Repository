@@ -369,83 +369,218 @@ export default function ComplaintsPage() {
 
             {/* New Complaint Dialog */}
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className="sm:max-w-lg" data-testid="complaint-dialog">
+                <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto" data-testid="complaint-dialog">
                     <DialogHeader>
-                        <DialogTitle>
+                        <DialogTitle className="text-xl font-semibold">
                             {isTenant ? 'Submit a Complaint' : 'Send Complaint to Landlord'}
                         </DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label>Property</Label>
-                            <Select
-                                value={formData.property_id}
-                                onValueChange={(value) => setFormData({ ...formData, property_id: value })}
-                            >
-                                <SelectTrigger data-testid="complaint-property-select">
-                                    <SelectValue placeholder="Select property" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {properties.map((property) => (
-                                        <SelectItem key={property.id} value={property.id}>
-                                            {property.name} - {property.address}
-                                            {isManager && property.landlord_name && ` (${property.landlord_name})`}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {isManager && (
-                                <p className="text-xs text-slate-500">
-                                    This complaint will be sent to the landlord assigned to this property.
-                                </p>
-                            )}
-                        </div>
+                        {/* Tenant-specific form fields */}
+                        {isTenant && (
+                            <>
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Your Name</Label>
+                                    <Input
+                                        value={user?.name || ''}
+                                        disabled
+                                        className="bg-slate-50"
+                                        data-testid="complaint-name-input"
+                                    />
+                                </div>
 
-                        <div className="space-y-2">
-                            <Label>Title</Label>
-                            <Input
-                                value={formData.title}
-                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="Brief summary of the issue"
-                                required
-                                data-testid="complaint-title-input"
-                            />
-                        </div>
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Unit Number</Label>
+                                    <Input
+                                        value={formData.unit_number}
+                                        onChange={(e) => setFormData({ ...formData, unit_number: e.target.value })}
+                                        placeholder="Enter your unit number"
+                                        required
+                                        data-testid="complaint-unit-input"
+                                    />
+                                </div>
 
-                        <div className="space-y-2">
-                            <Label>Priority</Label>
-                            <Select
-                                value={formData.priority}
-                                onValueChange={(value) => setFormData({ ...formData, priority: value })}
-                            >
-                                <SelectTrigger data-testid="complaint-priority-select">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="low">Low</SelectItem>
-                                    <SelectItem value="medium">Medium</SelectItem>
-                                    <SelectItem value="high">High</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Category</Label>
+                                    <Select
+                                        value={formData.category}
+                                        onValueChange={(value) => setFormData({ ...formData, category: value })}
+                                    >
+                                        <SelectTrigger data-testid="complaint-category-select">
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="plumbing">Plumbing</SelectItem>
+                                            <SelectItem value="electrical">Electrical</SelectItem>
+                                            <SelectItem value="hvac">HVAC / Air Conditioning</SelectItem>
+                                            <SelectItem value="appliance">Appliance Issue</SelectItem>
+                                            <SelectItem value="pest">Pest Control</SelectItem>
+                                            <SelectItem value="structural">Structural / Building</SelectItem>
+                                            <SelectItem value="security">Security Concern</SelectItem>
+                                            <SelectItem value="noise">Noise Complaint</SelectItem>
+                                            <SelectItem value="other">Other</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
 
-                        <div className="space-y-2">
-                            <Label>Description</Label>
-                            <Textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                placeholder="Describe the issue in detail"
-                                rows={4}
-                                required
-                                data-testid="complaint-description-input"
-                            />
-                        </div>
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Priority</Label>
+                                    <Select
+                                        value={formData.priority}
+                                        onValueChange={(value) => setFormData({ ...formData, priority: value })}
+                                    >
+                                        <SelectTrigger data-testid="complaint-priority-select">
+                                            <SelectValue placeholder="Select priority" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="low">Low - Can wait a few days</SelectItem>
+                                            <SelectItem value="medium">Medium - Needs attention soon</SelectItem>
+                                            <SelectItem value="high">High - Urgent issue</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
 
-                        <DialogFooter>
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Issue Title</Label>
+                                    <Input
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                        placeholder="Brief summary of the issue"
+                                        required
+                                        data-testid="complaint-title-input"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Detailed Description</Label>
+                                    <Textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Please describe the issue in detail..."
+                                        rows={4}
+                                        required
+                                        data-testid="complaint-description-input"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Upload Photos (Optional)</Label>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handlePhotoUpload}
+                                        accept="image/*"
+                                        multiple
+                                        className="hidden"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="w-full border-dashed border-2 h-20 flex flex-col items-center justify-center gap-2 hover:bg-slate-50"
+                                        data-testid="upload-photos-button"
+                                    >
+                                        <Upload className="w-5 h-5 text-slate-400" />
+                                        <span className="text-sm text-slate-500">Click to upload photos (max 5)</span>
+                                    </Button>
+                                    
+                                    {photos.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {photos.map((photo, index) => (
+                                                <div key={index} className="relative group">
+                                                    <img
+                                                        src={photo.preview}
+                                                        alt={`Upload ${index + 1}`}
+                                                        className="w-16 h-16 object-cover rounded-lg border"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removePhoto(index)}
+                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+
+                        {/* Property Manager form fields */}
+                        {isManager && (
+                            <>
+                                <div className="space-y-2">
+                                    <Label>Property</Label>
+                                    <Select
+                                        value={formData.property_id}
+                                        onValueChange={(value) => setFormData({ ...formData, property_id: value })}
+                                    >
+                                        <SelectTrigger data-testid="complaint-property-select">
+                                            <SelectValue placeholder="Select property" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {properties.map((property) => (
+                                                <SelectItem key={property.id} value={property.id}>
+                                                    {property.name} - {property.address}
+                                                    {property.landlord_name && ` (${property.landlord_name})`}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <p className="text-xs text-slate-500">
+                                        This complaint will be sent to the landlord assigned to this property.
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Title</Label>
+                                    <Input
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                        placeholder="Brief summary of the issue"
+                                        required
+                                        data-testid="complaint-title-input"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Priority</Label>
+                                    <Select
+                                        value={formData.priority}
+                                        onValueChange={(value) => setFormData({ ...formData, priority: value })}
+                                    >
+                                        <SelectTrigger data-testid="complaint-priority-select">
+                                            <SelectValue placeholder="Select priority" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="low">Low</SelectItem>
+                                            <SelectItem value="medium">Medium</SelectItem>
+                                            <SelectItem value="high">High</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Description</Label>
+                                    <Textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Describe the issue in detail"
+                                        rows={4}
+                                        required
+                                        data-testid="complaint-description-input"
+                                    />
+                                </div>
+                            </>
+                        )}
+
+                        <DialogFooter className="pt-4">
                             <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                                 Cancel
                             </Button>
-                            <Button type="submit" className="bg-slate-900 hover:bg-slate-800" data-testid="submit-complaint-button">
+                            <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700" data-testid="submit-complaint-button">
                                 Submit Complaint
                             </Button>
                         </DialogFooter>
