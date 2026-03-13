@@ -310,6 +310,22 @@ export default function ComplaintsPage() {
                                                 )}
                                             </div>
                                             <p className="text-slate-600 mb-3">{complaint.description}</p>
+                                            
+                                            {/* Display photos if available */}
+                                            {complaint.photos && complaint.photos.length > 0 && (
+                                                <div className="flex flex-wrap gap-2 mb-3">
+                                                    {complaint.photos.map((photo, photoIndex) => (
+                                                        <img
+                                                            key={photoIndex}
+                                                            src={photo}
+                                                            alt={`Complaint photo ${photoIndex + 1}`}
+                                                            className="w-20 h-20 object-cover rounded-lg border cursor-pointer hover:opacity-80"
+                                                            onClick={() => window.open(photo, '_blank')}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                            
                                             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
                                                 <div className="flex items-center gap-1">
                                                     <Building2 className="w-4 h-4" />
