@@ -400,6 +400,47 @@ export default function LeasesPage() {
                             )}
                         </div>
 
+                        {/* Lease Document Upload */}
+                        <div className="space-y-2">
+                            <Label>Lease Document (PDF)</Label>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleDocumentUpload}
+                                accept=".pdf,application/pdf"
+                                className="hidden"
+                            />
+                            {leaseDocument ? (
+                                <div className="flex items-center justify-between bg-slate-50 rounded-lg p-3">
+                                    <div className="flex items-center gap-3">
+                                        <FileText className="w-5 h-5 text-blue-600" />
+                                        <span className="text-sm text-slate-600">Lease document uploaded</span>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setLeaseDocument(null)}
+                                        className="text-red-500 hover:text-red-600"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            ) : (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="w-full border-dashed border-2 h-16 flex items-center justify-center gap-2"
+                                    data-testid="upload-lease-doc-button"
+                                >
+                                    <Upload className="w-4 h-4" />
+                                    <span>Upload Lease Document</span>
+                                </Button>
+                            )}
+                            <p className="text-xs text-slate-500">Upload the signed lease agreement (PDF, max 10MB)</p>
+                        </div>
+
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                                 Cancel
