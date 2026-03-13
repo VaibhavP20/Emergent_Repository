@@ -279,6 +279,7 @@ class LeaseListView(APIView):
             "property_address": prop.get("address") if prop else None,
             "tenant_name": tenant.get("name") if tenant else None,
             "landlord_name": prop.get("landlord_name") if prop else None,
+            "lease_document": data.get("lease_document"),
             "status": "active",
             "created_at": datetime.now(timezone.utc).isoformat()
         }
