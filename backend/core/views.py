@@ -428,6 +428,9 @@ class ComplaintListView(APIView):
             "title": data.get("title"),
             "description": data.get("description"),
             "priority": data.get("priority", "medium"),
+            "category": data.get("category"),
+            "unit_number": data.get("unit_number"),
+            "photos": data.get("photos", []),
             "property_name": prop.get("name") if prop else None,
             "status": "open",
             "response": None,
@@ -441,7 +444,7 @@ class ComplaintListView(APIView):
             complaint_doc["complaint_type"] = "tenant"
             complaint_doc["created_by_name"] = user.name
             # Notify managers using bulk insert
-            managers = list(users_collection.find({"role": "property_manager"}, {"id": 1, "_id": 0}))
+            managers = list(users_collection.find({"role": "property_manager"}, {"id": 1, "_id": 0}).limit(50))
             if managers:
                 notifications = [{
                     "id": str(uuid.uuid4()),
