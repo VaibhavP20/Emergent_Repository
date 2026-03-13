@@ -31,6 +31,8 @@ export default function LeasesPage() {
     const [loading, setLoading] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editingLease, setEditingLease] = useState(null);
+    const [leaseDocument, setLeaseDocument] = useState(null);
+    const fileInputRef = useRef(null);
     const [formData, setFormData] = useState({
         property_id: '',
         tenant_id: '',
