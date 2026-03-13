@@ -72,6 +72,7 @@ export default function LeasesPage() {
                 ...formData,
                 monthly_rent: parseFloat(formData.monthly_rent),
                 security_deposit: parseFloat(formData.security_deposit),
+                lease_document: leaseDocument,
             };
 
             if (editingLease) {
@@ -79,6 +80,7 @@ export default function LeasesPage() {
                     start_date: formData.start_date,
                     end_date: formData.end_date,
                     monthly_rent: dataToSend.monthly_rent,
+                    lease_document: leaseDocument,
                 });
                 toast.success('Lease updated successfully');
             } else {
@@ -93,6 +95,21 @@ export default function LeasesPage() {
         }
     };
 
+    const handleDocumentUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 10 * 1024 * 1024) {
+                toast.error('File too large. Max size is 10MB');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setLeaseDocument(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleEdit = (lease) => {
         setEditingLease(lease);
         setFormData({
@@ -103,6 +120,7 @@ export default function LeasesPage() {
             monthly_rent: lease.monthly_rent.toString(),
             security_deposit: lease.security_deposit.toString(),
         });
+        setLeaseDocument(lease.lease_document || null);
         setDialogOpen(true);
     };
 
