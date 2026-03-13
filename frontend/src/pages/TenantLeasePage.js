@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { getLeases } from '../services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Building2, Calendar, DollarSign, User, FileText } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Building2, Calendar, DollarSign, User, FileText, Download, Eye } from 'lucide-react';
 
 export default function TenantLeasePage() {
     const [leases, setLeases] = useState([]);
