@@ -73,7 +73,12 @@ export default function ComplaintsPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await createComplaint(formData);
+            // Convert photos to base64 for storage
+            const photoData = photos.map(p => p.base64);
+            await createComplaint({
+                ...formData,
+                photos: photoData
+            });
             toast.success('Complaint submitted successfully');
             setDialogOpen(false);
             resetForm();
@@ -81,6 +86,35 @@ export default function ComplaintsPage() {
         } catch (error) {
             toast.error(error.response?.data?.detail || 'Failed to submit complaint');
         }
+    };
+
+    const handlePhotoUpload = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length + photos.length > 5) {
+            toast.error('Maximum 5 photos allowed');
+            return;
+        }
+
+        files.forEach(file => {
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error(`${file.name} is too large. Max size is 5MB`);
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPhotos(prev => [...prev, {
+                    name: file.name,
+                    base64: reader.result,
+                    preview: URL.createObjectURL(file)
+                }]);
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const removePhoto = (index) => {
+        setPhotos(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleResponse = async (e) => {
