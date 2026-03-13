@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { getLeases, createLease, updateLease, deleteLease, getProperties, getUsers } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -21,7 +21,7 @@ import {
     SelectValue,
 } from '../components/ui/select';
 import { toast } from 'sonner';
-import { Plus, FileText, Edit, Trash2, Building2, User, Calendar, DollarSign } from 'lucide-react';
+import { Plus, FileText, Edit, Trash2, Building2, User, Calendar, DollarSign, Upload, X } from 'lucide-react';
 
 export default function LeasesPage() {
     const { user } = useAuth();
