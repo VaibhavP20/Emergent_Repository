@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { getComplaints, createComplaint, updateComplaint, getProperties } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -23,7 +23,7 @@ import {
 } from '../components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, MessageSquare, AlertCircle, CheckCircle, Clock, Building2, User, Reply } from 'lucide-react';
+import { Plus, MessageSquare, AlertCircle, CheckCircle, Clock, Building2, User, Reply, Upload, X, Image } from 'lucide-react';
 
 export default function ComplaintsPage() {
     const { user } = useAuth();
