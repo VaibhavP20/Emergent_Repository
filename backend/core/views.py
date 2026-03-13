@@ -307,6 +307,8 @@ class LeaseDetailView(APIView):
             update_data["end_date"] = data.get("end_date")
         if data.get("monthly_rent"):
             update_data["monthly_rent"] = float(data.get("monthly_rent"))
+        if "lease_document" in data:
+            update_data["lease_document"] = data.get("lease_document")
         
         result = leases_collection.update_one({"id": lease_id}, {"$set": update_data})
         if result.matched_count == 0:
