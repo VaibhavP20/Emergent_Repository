@@ -156,8 +156,11 @@ export default function ComplaintsPage() {
             property_id: '',
             title: '',
             description: '',
-            priority: 'medium',
+            priority: '',
+            category: '',
+            unit_number: '',
         });
+        setPhotos([]);
     };
 
     const formatDate = (dateString) => {
