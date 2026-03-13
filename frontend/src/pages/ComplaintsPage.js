@@ -39,8 +39,12 @@ export default function ComplaintsPage() {
         title: '',
         description: '',
         priority: 'medium',
+        category: '',
+        unit_number: '',
     });
     const [responseText, setResponseText] = useState('');
+    const [photos, setPhotos] = useState([]);
+    const fileInputRef = useRef(null);
 
     const isTenant = user?.role === 'tenant';
     const isManager = user?.role === 'property_manager';
