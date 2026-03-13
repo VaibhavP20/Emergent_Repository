@@ -150,6 +150,60 @@ export default function TenantLeasePage() {
                                             </div>
                                         </div>
                                     )}
+
+                                    {/* Lease Document Section */}
+                                    <div className="mt-6 pt-6 border-t border-slate-100">
+                                        <h3 className="text-sm font-medium text-slate-700 mb-3 flex items-center gap-2">
+                                            <FileText className="w-4 h-4" />
+                                            Lease Document
+                                        </h3>
+                                        {lease.lease_document ? (
+                                            <div className="flex items-center justify-between bg-slate-50 rounded-lg p-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                        <FileText className="w-5 h-5 text-blue-600" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium text-slate-800">Lease Agreement</p>
+                                                        <p className="text-sm text-slate-500">PDF Document</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => window.open(lease.lease_document, '_blank')}
+                                                        className="flex items-center gap-2"
+                                                        data-testid="view-lease-doc"
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                        View
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            const link = document.createElement('a');
+                                                            link.href = lease.lease_document;
+                                                            link.download = `lease_${lease.id}.pdf`;
+                                                            link.click();
+                                                        }}
+                                                        className="flex items-center gap-2"
+                                                        data-testid="download-lease-doc"
+                                                    >
+                                                        <Download className="w-4 h-4" />
+                                                        Download
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="bg-slate-50 rounded-lg p-4 text-center">
+                                                <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                                                <p className="text-sm text-slate-500">No lease document uploaded yet</p>
+                                                <p className="text-xs text-slate-400 mt-1">Contact your property manager for your lease agreement</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </CardContent>
                             </Card>
                         );
