@@ -145,6 +145,7 @@ export default function LeasesPage() {
             monthly_rent: '',
             security_deposit: '',
         });
+        setLeaseDocument(null);
     };
 
     const formatDate = (dateString) => {
