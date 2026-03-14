@@ -104,7 +104,7 @@ export default function LandlordsPage() {
         try {
             await deleteUser(id);
             toast.success('Landlord removed successfully');
-            fetchLandlords();
+            fetchData();
         } catch (error) {
             toast.error('Failed to remove landlord');
         }
