@@ -2,6 +2,13 @@ import axios from 'axios';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
+// Auth
+export const register = (data) => axios.post(`${API}/auth/register`, data);
+export const login = (data) => axios.post(`${API}/auth/login`, data);
+export const getMe = () => axios.get(`${API}/auth/me`);
+export const forgotPassword = (email) => axios.post(`${API}/auth/forgot-password`, { email });
+export const resetPassword = (token, password) => axios.post(`${API}/auth/reset-password`, { token, password });
+
 // Properties (Django REST Framework needs trailing slashes for viewsets)
 export const getProperties = () => axios.get(`${API}/properties/`);
 export const getProperty = (id) => axios.get(`${API}/properties/${id}/`);
