@@ -754,3 +754,57 @@ class DashboardStatsView(APIView):
             stats["pending_rent"] = rents_collection.count_documents({"lease_id": {"$in": lease_ids}, "status": "pending"})
         
         return Response(stats)
+
+
+class PropertyTenantsView(APIView):
+    """Get all tenants in properties with their rent status"""
+    
+    def get(self, request):
+        user = request.user
+        
+        if user.role == 'property_manager':
+            # Get all properties
+            properties = list(properties_collection.find({}, {"_id": 0}).limit(100))
+        elif user.role == 'landlord':
+            # Get only landlord's properties
+            properties = list(properties_collection.find({"landlord_id": user.id}, {"_id": 0}).limit(100))
+        else:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        
+        result = []
+        for prop in properties:
+            # Get leases for this property
+            leases = list(leases_collection.find({"property_id": prop["id"]}, {"_id": 0}).limit(50))
+            
+            tenants_data = []
+            for lease in leases:
+                tenant = users_collection.find_one({"id": lease.get("tenant_id")}, {"_id": 0, "password": 0})
+                if tenant:
+                    # Get rent status for this lease
+                    pending_rents = list(rents_collection.find(
+                        {"lease_id": lease["id"], "status": "pending"},
+                        {"_id": 0}
+                    ).limit(12))
+                    
+                    paid_rents = rents_collection.count_documents({"lease_id": lease["id"], "status": "paid"})
+                    
+                    # Calculate total outstanding
+                    total_outstanding = sum(r.get("amount", 0) for r in pending_rents)
+                    
+                    tenants_data.append({
+                        "tenant": tenant,
+                        "lease": lease,
+                        "rent_status": {
+                            "pending_count": len(pending_rents),
+                            "paid_count": paid_rents,
+                            "total_outstanding": total_outstanding,
+                            "pending_rents": pending_rents
+                        }
+                    })
+            
+            result.append({
+                "property": prop,
+                "tenants": tenants_data
+            })
+        
+        return Response(result)
