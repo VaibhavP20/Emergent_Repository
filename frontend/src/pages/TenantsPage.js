@@ -318,6 +318,94 @@ export default function TenantsPage() {
                     </form>
                 </DialogContent>
             </Dialog>
+
+            {/* Assign Property Dialog */}
+            <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+                <DialogContent className="sm:max-w-md" data-testid="assign-property-dialog">
+                    <DialogHeader>
+                        <DialogTitle>Assign Property to {selectedTenant?.name}</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAssignSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>Select Property</Label>
+                            <Select
+                                value={assignData.property_id}
+                                onValueChange={(value) => setAssignData({ ...assignData, property_id: value })}
+                            >
+                                <SelectTrigger data-testid="assign-property-select">
+                                    <SelectValue placeholder="Choose a property" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {properties.map((property) => (
+                                        <SelectItem key={property.id} value={property.id}>
+                                            {property.name} - {property.address}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>Lease Start Date</Label>
+                                <Input
+                                    type="date"
+                                    value={assignData.start_date}
+                                    onChange={(e) => setAssignData({ ...assignData, start_date: e.target.value })}
+                                    required
+                                    data-testid="assign-start-date"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Lease End Date</Label>
+                                <Input
+                                    type="date"
+                                    value={assignData.end_date}
+                                    onChange={(e) => setAssignData({ ...assignData, end_date: e.target.value })}
+                                    required
+                                    data-testid="assign-end-date"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>Monthly Rent ($)</Label>
+                                <Input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={assignData.monthly_rent}
+                                    onChange={(e) => setAssignData({ ...assignData, monthly_rent: e.target.value })}
+                                    required
+                                    data-testid="assign-monthly-rent"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Security Deposit ($)</Label>
+                                <Input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={assignData.security_deposit}
+                                    onChange={(e) => setAssignData({ ...assignData, security_deposit: e.target.value })}
+                                    required
+                                    data-testid="assign-security-deposit"
+                                />
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setAssignDialogOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700" data-testid="confirm-assign-button">
+                                Assign Property
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </DashboardLayout>
     );
 }
