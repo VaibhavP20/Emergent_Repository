@@ -14,7 +14,7 @@ import {
     DialogFooter,
 } from '../components/ui/dialog';
 import { toast } from 'sonner';
-import { Users, Mail, Phone, Trash2, Calendar, Plus, Lock } from 'lucide-react';
+import { Users, Mail, Phone, Trash2, Calendar, Plus } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -25,7 +25,6 @@ export default function TenantsPage() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: '',
         phone: '',
     });
 
