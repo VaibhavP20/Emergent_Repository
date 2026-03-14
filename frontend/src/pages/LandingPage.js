@@ -64,13 +64,8 @@ export default function LandingPage() {
                     </div>
                     <div className="flex items-center gap-3">
                         <Link to="/login">
-                            <Button variant="ghost" className="text-gray-600 hover:text-gray-900">
-                                Sign in
-                            </Button>
-                        </Link>
-                        <Link to="/register">
                             <Button className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6">
-                                Get Started
+                                Sign in
                             </Button>
                         </Link>
                     </div>
