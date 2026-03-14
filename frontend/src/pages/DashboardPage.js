@@ -259,6 +259,103 @@ export default function DashboardPage() {
                     </Card>
                 </div>
 
+                {/* Property Tenants with Rent Status - For Property Managers and Landlords */}
+                {(user?.role === 'property_manager' || user?.role === 'landlord') && propertyTenants.length > 0 && (
+                    <Card className="animate-fade-in" data-testid="property-tenants-card">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                                <Home className="w-5 h-5" />
+                                Tenants by Property
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-6">
+                                {propertyTenants.map((item) => (
+                                    <div key={item.property.id} className="border rounded-lg p-4" data-testid={`property-${item.property.id}`}>
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                                    <Building2 className="w-5 h-5 text-blue-600" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-semibold text-slate-800">{item.property.name}</h3>
+                                                    <p className="text-sm text-slate-500">{item.property.address}</p>
+                                                </div>
+                                            </div>
+                                            <span className="text-sm text-slate-500">
+                                                {item.tenants.length} tenant{item.tenants.length !== 1 ? 's' : ''}
+                                            </span>
+                                        </div>
+                                        
+                                        {item.tenants.length === 0 ? (
+                                            <div className="text-center py-4 text-slate-400">
+                                                <User className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                                                <p className="text-sm">No tenants assigned</p>
+                                            </div>
+                                        ) : (
+                                            <div className="overflow-x-auto">
+                                                <table className="data-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Tenant</th>
+                                                            <th>Email</th>
+                                                            <th>Monthly Rent</th>
+                                                            <th>Lease Period</th>
+                                                            <th>Rent Status</th>
+                                                            <th>Outstanding</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {item.tenants.map((tenantData) => (
+                                                            <tr key={tenantData.tenant.id} data-testid={`tenant-${tenantData.tenant.id}`}>
+                                                                <td>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                                                                            <User className="w-4 h-4 text-emerald-600" />
+                                                                        </div>
+                                                                        <span className="font-medium text-slate-800">{tenantData.tenant.name}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="text-slate-500">{tenantData.tenant.email}</td>
+                                                                <td className="font-medium">{formatCurrency(tenantData.lease.monthly_rent)}</td>
+                                                                <td className="text-sm text-slate-500">
+                                                                    {formatDate(tenantData.lease.start_date)} - {formatDate(tenantData.lease.end_date)}
+                                                                </td>
+                                                                <td>
+                                                                    {tenantData.rent_status.pending_count === 0 ? (
+                                                                        <span className="badge badge-success flex items-center gap-1 w-fit">
+                                                                            <CheckCircle className="w-3 h-3" />
+                                                                            Paid
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="badge badge-danger flex items-center gap-1 w-fit">
+                                                                            <AlertTriangle className="w-3 h-3" />
+                                                                            {tenantData.rent_status.pending_count} pending
+                                                                        </span>
+                                                                    )}
+                                                                </td>
+                                                                <td>
+                                                                    {tenantData.rent_status.total_outstanding > 0 ? (
+                                                                        <span className="font-semibold text-red-600">
+                                                                            {formatCurrency(tenantData.rent_status.total_outstanding)}
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="text-emerald-600">$0.00</span>
+                                                                    )}
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
                 {/* Recent Leases */}
                 {recentLeases.length > 0 && (
                     <Card className="animate-fade-in" data-testid="recent-leases-card">
