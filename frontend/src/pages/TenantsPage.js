@@ -223,11 +223,22 @@ export default function TenantsPage() {
                                                 </div>
                                             </td>
                                             <td>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => handleDelete(tenant.id, tenant.name)}
-                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleAssignProperty(tenant)}
+                                                        className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                                                        data-testid={`assign-property-${tenant.id}`}
+                                                    >
+                                                        <Home className="w-4 h-4 mr-1" />
+                                                        Assign Property
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleDelete(tenant.id, tenant.name)}
+                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                                     data-testid={`delete-tenant-${tenant.id}`}
                                                 >
                                                     <Trash2 className="w-4 h-4" />
