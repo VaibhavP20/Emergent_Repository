@@ -265,18 +265,33 @@ class UserListView(APIView):
         if users_collection.find_one({"email": data.get("email")}):
             return Response({"email": ["Email already exists"]}, status=status.HTTP_400_BAD_REQUEST)
         
+        # Generate random password for the new user
+        random_password = generate_random_password()
+        
         user_id = str(uuid.uuid4())
         user_doc = {
             "id": user_id,
             "email": data.get("email"),
-            "password": hash_password(data.get("password")),
+            "password": hash_password(random_password),
             "name": data.get("name"),
             "role": data.get("role"),
             "phone": data.get("phone"),
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         users_collection.insert_one(user_doc)
-        return Response(user_to_response(user_doc), status=status.HTTP_201_CREATED)
+        
+        # Send credentials email to the new user
+        email_sent = send_credentials_email(
+            data.get("email"),
+            data.get("name"),
+            random_password,
+            data.get("role")
+        )
+        
+        response_data = user_to_response(user_doc)
+        response_data["email_sent"] = email_sent
+        
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 class UserDetailView(APIView):
