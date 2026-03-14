@@ -7,7 +7,7 @@ from .views import (
     RentListView, RentDetailView,
     ComplaintListView, ComplaintDetailView,
     NotificationListView, NotificationReadView, NotificationReadAllView,
-    DashboardStatsView
+    DashboardStatsView, PropertyTenantsView
 )
 
 urlpatterns = [
@@ -25,6 +25,7 @@ urlpatterns = [
     # Properties
     path('properties/', PropertyListView.as_view(), name='properties-list'),
     path('properties/<str:property_id>/', PropertyDetailView.as_view(), name='properties-detail'),
+    path('properties/tenants/all/', PropertyTenantsView.as_view(), name='property-tenants'),
     
     # Leases
     path('leases/', LeaseListView.as_view(), name='leases-list'),
