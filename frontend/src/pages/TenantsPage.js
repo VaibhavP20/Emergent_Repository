@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
-import { getUsers, deleteUser } from '../services/api';
+import { getUsers, deleteUser, getProperties, createLease } from '../services/api';
 import axios from 'axios';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -13,31 +13,52 @@ import {
     DialogTitle,
     DialogFooter,
 } from '../components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '../components/ui/select';
 import { toast } from 'sonner';
-import { Users, Mail, Phone, Trash2, Calendar, Plus } from 'lucide-react';
+import { Users, Mail, Phone, Trash2, Calendar, Plus, Building2, Home } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function TenantsPage() {
     const [tenants, setTenants] = useState([]);
+    const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+    const [selectedTenant, setSelectedTenant] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         phone: '',
     });
+    const [assignData, setAssignData] = useState({
+        property_id: '',
+        start_date: '',
+        end_date: '',
+        monthly_rent: '',
+        security_deposit: '',
+    });
 
     useEffect(() => {
-        fetchTenants();
+        fetchData();
     }, []);
 
-    const fetchTenants = async () => {
+    const fetchData = async () => {
         try {
-            const response = await getUsers('tenant');
-            setTenants(response.data);
+            const [tenantsRes, propertiesRes] = await Promise.all([
+                getUsers('tenant'),
+                getProperties()
+            ]);
+            setTenants(tenantsRes.data);
+            setProperties(propertiesRes.data);
         } catch (error) {
-            toast.error('Failed to fetch tenants');
+            toast.error('Failed to fetch data');
         } finally {
             setLoading(false);
         }
