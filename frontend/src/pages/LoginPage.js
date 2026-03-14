@@ -102,13 +102,12 @@ export default function LoginPage() {
                         </form>
 
                         <div className="mt-6 text-center text-sm">
-                            <span className="text-slate-500">Don't have an account? </span>
                             <Link 
-                                to="/register" 
+                                to="/forgot-password" 
                                 className="text-emerald-600 hover:text-emerald-700 font-medium"
-                                data-testid="register-link"
+                                data-testid="forgot-password-link"
                             >
-                                Create one
+                                Forgot your password?
                             </Link>
                         </div>
                     </CardContent>
