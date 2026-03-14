@@ -15,6 +15,7 @@ export const getProperty = (id) => axios.get(`${API}/properties/${id}/`);
 export const createProperty = (data) => axios.post(`${API}/properties/`, data);
 export const updateProperty = (id, data) => axios.put(`${API}/properties/${id}/`, data);
 export const deleteProperty = (id) => axios.delete(`${API}/properties/${id}/`);
+export const getPropertyTenants = () => axios.get(`${API}/properties/tenants/all/`);
 
 // Users
 export const getUsers = (role) => axios.get(`${API}/users/`, { params: { role } });
