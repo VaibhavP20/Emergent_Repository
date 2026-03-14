@@ -78,9 +78,39 @@ export default function TenantsPage() {
             }
             setDialogOpen(false);
             resetForm();
-            fetchTenants();
+            fetchData();
         } catch (error) {
             toast.error(error.response?.data?.email?.[0] || error.response?.data?.detail || 'Failed to create tenant');
+        }
+    };
+
+    const handleAssignProperty = (tenant) => {
+        setSelectedTenant(tenant);
+        setAssignData({
+            property_id: '',
+            start_date: '',
+            end_date: '',
+            monthly_rent: '',
+            security_deposit: '',
+        });
+        setAssignDialogOpen(true);
+    };
+
+    const handleAssignSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await createLease({
+                ...assignData,
+                tenant_id: selectedTenant.id,
+                monthly_rent: parseFloat(assignData.monthly_rent),
+                security_deposit: parseFloat(assignData.security_deposit),
+            });
+            toast.success(`${selectedTenant.name} has been assigned to the property!`);
+            setAssignDialogOpen(false);
+            setSelectedTenant(null);
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Failed to assign property');
         }
     };
 
@@ -89,7 +119,7 @@ export default function TenantsPage() {
         try {
             await deleteUser(id);
             toast.success('Tenant removed successfully');
-            fetchTenants();
+            fetchData();
         } catch (error) {
             toast.error('Failed to remove tenant');
         }
