@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
-import { getUsers, deleteUser } from '../services/api';
+import { getUsers, deleteUser, getProperties, updateProperty } from '../services/api';
 import axios from 'axios';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -13,15 +13,26 @@ import {
     DialogTitle,
     DialogFooter,
 } from '../components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '../components/ui/select';
 import { toast } from 'sonner';
-import { UserCircle, Mail, Phone, Trash2, Calendar, Plus } from 'lucide-react';
+import { UserCircle, Mail, Phone, Trash2, Calendar, Plus, Building2 } from 'lucide-react';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function LandlordsPage() {
     const [landlords, setLandlords] = useState([]);
+    const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+    const [selectedLandlord, setSelectedLandlord] = useState(null);
+    const [selectedPropertyId, setSelectedPropertyId] = useState('');
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -29,15 +40,19 @@ export default function LandlordsPage() {
     });
 
     useEffect(() => {
-        fetchLandlords();
+        fetchData();
     }, []);
 
-    const fetchLandlords = async () => {
+    const fetchData = async () => {
         try {
-            const response = await getUsers('landlord');
-            setLandlords(response.data);
+            const [landlordsRes, propertiesRes] = await Promise.all([
+                getUsers('landlord'),
+                getProperties()
+            ]);
+            setLandlords(landlordsRes.data);
+            setProperties(propertiesRes.data);
         } catch (error) {
-            toast.error('Failed to fetch landlords');
+            toast.error('Failed to fetch data');
         } finally {
             setLoading(false);
         }
@@ -57,9 +72,30 @@ export default function LandlordsPage() {
             }
             setDialogOpen(false);
             resetForm();
-            fetchLandlords();
+            fetchData();
         } catch (error) {
             toast.error(error.response?.data?.email?.[0] || error.response?.data?.detail || 'Failed to create landlord');
+        }
+    };
+
+    const handleAssignProperty = (landlord) => {
+        setSelectedLandlord(landlord);
+        setSelectedPropertyId('');
+        setAssignDialogOpen(true);
+    };
+
+    const handleAssignSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await updateProperty(selectedPropertyId, {
+                landlord_id: selectedLandlord.id
+            });
+            toast.success(`Property assigned to ${selectedLandlord.name}!`);
+            setAssignDialogOpen(false);
+            setSelectedLandlord(null);
+            fetchData();
+        } catch (error) {
+            toast.error(error.response?.data?.detail || 'Failed to assign property');
         }
     };
 
