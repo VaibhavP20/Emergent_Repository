@@ -46,11 +46,15 @@ export default function TenantsPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API}/users/`, {
+            const response = await axios.post(`${API}/users/`, {
                 ...formData,
                 role: 'tenant'
             });
-            toast.success('Tenant created successfully');
+            if (response.data.email_sent) {
+                toast.success('Tenant created! Login credentials sent to their email.');
+            } else {
+                toast.success('Tenant created! (Email notification may have failed)');
+            }
             setDialogOpen(false);
             resetForm();
             fetchTenants();
@@ -74,7 +78,6 @@ export default function TenantsPage() {
         setFormData({
             name: '',
             email: '',
-            password: '',
             phone: '',
         });
     };
