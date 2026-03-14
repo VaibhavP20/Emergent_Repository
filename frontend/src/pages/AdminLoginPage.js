@@ -119,15 +119,24 @@ export default function AdminLoginPage() {
                             </Button>
                         </form>
 
-                        <div className="mt-6 text-center text-sm">
-                            <span className="text-slate-500">Not an admin? </span>
+                        <div className="mt-6 space-y-2 text-center text-sm">
                             <Link 
-                                to="/login" 
-                                className="text-emerald-400 hover:text-emerald-300 font-medium"
-                                data-testid="regular-login-link"
+                                to="/forgot-password" 
+                                className="text-emerald-400 hover:text-emerald-300 font-medium block"
+                                data-testid="admin-forgot-password-link"
                             >
-                                Regular login
+                                Forgot your password?
                             </Link>
+                            <div>
+                                <span className="text-slate-500">Not an admin? </span>
+                                <Link 
+                                    to="/login" 
+                                    className="text-emerald-400 hover:text-emerald-300 font-medium"
+                                    data-testid="regular-login-link"
+                                >
+                                    Regular login
+                                </Link>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
