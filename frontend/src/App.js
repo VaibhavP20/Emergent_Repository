@@ -108,10 +108,18 @@ function AppRoutes() {
                 }
             />
             <Route
-                path="/register"
+                path="/forgot-password"
                 element={
                     <PublicRoute>
-                        <RegisterPage />
+                        <ForgotPasswordPage />
+                    </PublicRoute>
+                }
+            />
+            <Route
+                path="/reset-password"
+                element={
+                    <PublicRoute>
+                        <ResetPasswordPage />
                     </PublicRoute>
                 }
             />
