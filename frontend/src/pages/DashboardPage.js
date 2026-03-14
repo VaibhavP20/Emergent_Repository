@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
-import { getDashboardStats, getLeases, getRents, getComplaints } from '../services/api';
+import { getDashboardStats, getLeases, getRents, getComplaints, getPropertyTenants } from '../services/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Building2, Users, MessageSquare, DollarSign, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { Building2, Users, MessageSquare, DollarSign, AlertTriangle, CheckCircle, Clock, Home, User } from 'lucide-react';
 
 export default function DashboardPage() {
     const { user } = useAuth();
@@ -11,6 +11,7 @@ export default function DashboardPage() {
     const [recentLeases, setRecentLeases] = useState([]);
     const [pendingRents, setPendingRents] = useState([]);
     const [openComplaints, setOpenComplaints] = useState([]);
+    const [propertyTenants, setPropertyTenants] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -19,16 +20,28 @@ export default function DashboardPage() {
 
     const fetchDashboardData = async () => {
         try {
-            const [statsRes, leasesRes, rentsRes, complaintsRes] = await Promise.all([
+            const promises = [
                 getDashboardStats(),
                 getLeases(),
                 getRents(),
                 getComplaints(),
-            ]);
-            setStats(statsRes.data);
-            setRecentLeases(leasesRes.data.slice(0, 5));
-            setPendingRents(rentsRes.data.filter(r => r.status === 'pending').slice(0, 5));
-            setOpenComplaints(complaintsRes.data.filter(c => c.status === 'open').slice(0, 5));
+            ];
+            
+            // Add property tenants for property managers and landlords
+            if (user?.role === 'property_manager' || user?.role === 'landlord') {
+                promises.push(getPropertyTenants());
+            }
+            
+            const results = await Promise.all(promises);
+            
+            setStats(results[0].data);
+            setRecentLeases(results[1].data.slice(0, 5));
+            setPendingRents(results[2].data.filter(r => r.status === 'pending').slice(0, 5));
+            setOpenComplaints(results[3].data.filter(c => c.status === 'open').slice(0, 5));
+            
+            if (results[4]) {
+                setPropertyTenants(results[4].data);
+            }
         } catch (error) {
             console.error('Failed to fetch dashboard data:', error);
         } finally {
