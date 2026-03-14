@@ -1,6 +1,7 @@
 import uuid
 import bcrypt
 import jwt
+import secrets
 from datetime import datetime, timezone, timedelta
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -8,6 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
+from django.core.mail import send_mail
 from .db import (
     users_collection, properties_collection, leases_collection,
     rents_collection, complaints_collection, notifications_collection
@@ -39,6 +41,76 @@ def user_to_response(user):
         "phone": user.get("phone"),
         "created_at": user["created_at"]
     }
+
+def generate_random_password(length=12):
+    """Generate a random password"""
+    return secrets.token_urlsafe(length)[:length]
+
+def send_credentials_email(email, name, password, role):
+    """Send login credentials to newly created user"""
+    try:
+        subject = "Welcome to House2home Property Management - Your Login Credentials"
+        message = f"""
+Hello {name},
+
+Welcome to House2home Property Management!
+
+Your account has been created with the following credentials:
+
+Email: {email}
+Password: {password}
+Role: {role.replace('_', ' ').title()}
+
+Please login at: https://property-hub-507.emergent.host/login
+
+For security, please change your password after your first login.
+
+If you have any questions, please contact your property manager.
+
+Best regards,
+House2home Property Management Team
+        """
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        return True
+    except Exception as e:
+        print(f"Failed to send credentials email: {e}")
+        return False
+
+def send_password_reset_email(email, name, reset_token):
+    """Send password reset email"""
+    try:
+        reset_link = f"https://property-hub-507.emergent.host/reset-password?token={reset_token}"
+        subject = "House2home - Password Reset Request"
+        message = f"""
+Hello {name},
+
+You requested a password reset for your House2home account.
+
+Click the link below to reset your password (valid for 1 hour):
+{reset_link}
+
+If you did not request this reset, please ignore this email.
+
+Best regards,
+House2home Property Management Team
+        """
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        return True
+    except Exception as e:
+        print(f"Failed to send password reset email: {e}")
+        return False
 
 def create_notification(user_id, title, message, notification_type):
     notification = {
