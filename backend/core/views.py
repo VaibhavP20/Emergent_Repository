@@ -39,7 +39,7 @@ def user_to_response(user):
         "name": user["name"],
         "role": user["role"],
         "phone": user.get("phone"),
-        "created_at": user["created_at"]
+        "created_at": user.get("created_at", datetime.now(timezone.utc).isoformat())
     }
 
 def generate_random_password(length=12):
