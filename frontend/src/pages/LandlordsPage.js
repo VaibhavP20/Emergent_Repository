@@ -225,25 +225,7 @@ export default function LandlordsPage() {
                                     data-testid="landlord-email-input"
                                 />
                             </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    placeholder="••••••••"
-                                    className="pl-10"
-                                    required
-                                    minLength={6}
-                                    data-testid="landlord-password-input"
-                                />
-                            </div>
-                            <p className="text-xs text-slate-500">Minimum 6 characters. Share this with the landlord for login.</p>
+                            <p className="text-xs text-slate-500">Login credentials will be sent to this email.</p>
                         </div>
 
                         <div className="space-y-2">
