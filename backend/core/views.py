@@ -181,6 +181,70 @@ class MeView(APIView):
         return Response(user_to_response(user))
 
 
+class ForgotPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        user = users_collection.find_one({"email": email})
+        
+        if not user:
+            # Return success even if user not found (security best practice)
+            return Response({"message": "If this email exists, a reset link has been sent."})
+        
+        # Generate reset token
+        reset_token = secrets.token_urlsafe(32)
+        expiry = datetime.now(timezone.utc) + timedelta(hours=1)
+        
+        # Store reset token in database
+        users_collection.update_one(
+            {"email": email},
+            {"$set": {
+                "reset_token": reset_token,
+                "reset_token_expiry": expiry.isoformat()
+            }}
+        )
+        
+        # Send email
+        send_password_reset_email(email, user.get("name", "User"), reset_token)
+        
+        return Response({"message": "If this email exists, a reset link has been sent."})
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get("token")
+        new_password = request.data.get("password")
+        
+        if not token or not new_password:
+            return Response({"detail": "Token and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = users_collection.find_one({"reset_token": token})
+        
+        if not user:
+            return Response({"detail": "Invalid or expired reset token"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check expiry
+        expiry = user.get("reset_token_expiry")
+        if expiry:
+            expiry_dt = datetime.fromisoformat(expiry.replace('Z', '+00:00'))
+            if datetime.now(timezone.utc) > expiry_dt:
+                return Response({"detail": "Reset token has expired"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Update password and clear reset token
+        users_collection.update_one(
+            {"reset_token": token},
+            {
+                "$set": {"password": hash_password(new_password)},
+                "$unset": {"reset_token": "", "reset_token_expiry": ""}
+            }
+        )
+        
+        return Response({"message": "Password reset successful"})
+
+
 # ==================== USER VIEWS ====================
 
 class UserListView(APIView):
