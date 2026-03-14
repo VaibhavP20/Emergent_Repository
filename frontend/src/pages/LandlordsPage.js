@@ -46,11 +46,15 @@ export default function LandlordsPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API}/users/`, {
+            const response = await axios.post(`${API}/users/`, {
                 ...formData,
                 role: 'landlord'
             });
-            toast.success('Landlord created successfully');
+            if (response.data.email_sent) {
+                toast.success('Landlord created! Login credentials sent to their email.');
+            } else {
+                toast.success('Landlord created! (Email notification may have failed)');
+            }
             setDialogOpen(false);
             resetForm();
             fetchLandlords();
@@ -74,7 +78,6 @@ export default function LandlordsPage() {
         setFormData({
             name: '',
             email: '',
-            password: '',
             phone: '',
         });
     };
